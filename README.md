@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Longevo
+
+A TripAdvisor-style discovery and review platform for longevity clinics and doctors. Built with Next.js 14, Supabase, and Tailwind CSS.
+
+## Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS + Shadcn/ui
+- **Database & Auth:** Supabase (PostgreSQL + Auth)
+- **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone and install
+
+```bash
+git clone <repo-url>
+cd longevo
+npm install
+```
+
+### 2. Set up Supabase
+
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Run the migration SQL in your Supabase SQL editor:
+   - Copy the contents of `supabase/migrations/00001_initial_schema.sql`
+   - Paste and run in the SQL Editor
+
+### 3. Configure environment variables
+
+Copy the example env file and fill in your Supabase credentials:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Required variables:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+ADMIN_EMAIL=your-admin@email.com
+```
+
+### 4. Seed the database (optional)
+
+```bash
+npx tsx scripts/seed.ts
+```
+
+This seeds 8 clinics across Istanbul, Ankara, Berlin, and London with doctors, treatments, and reviews.
+
+### 5. Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+  app/
+    page.tsx              # Homepage
+    search/page.tsx       # Search & discovery
+    clinics/[slug]/       # Clinic detail
+    reviews/new/          # Write review (auth required)
+    auth/login/           # Login
+    auth/signup/          # Signup
+    auth/callback/        # OAuth callback
+    admin/                # Admin dashboard
+    not-found.tsx         # 404 page
+  components/
+    ui/                   # Shadcn/ui components
+    navbar.tsx            # Navigation bar
+    footer.tsx            # Footer
+    clinic-card.tsx       # Clinic card component
+    star-rating.tsx       # Star rating component
+  lib/
+    supabase/             # Supabase client utilities
+    types.ts              # TypeScript types
+    utils.ts              # Utility functions
+supabase/
+  migrations/             # Database migration SQL
+scripts/
+  seed.ts                 # Database seeding script
+```
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- Clinic search with filters (city, treatment, rating, verified)
+- Clinic detail pages with doctor profiles and reviews
+- User authentication (email/password)
+- Review submission with star ratings
+- Admin dashboard for clinic management
+- Mobile responsive design
+- Row Level Security (RLS) on all tables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Deploy to Vercel:
 
-## Deploy on Vercel
+1. Push to GitHub
+2. Import project in Vercel
+3. Add environment variables in Vercel dashboard
+4. Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Database Schema
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **clinics** - Clinic listings with location, contact info
+- **doctors** - Doctors linked to clinics
+- **treatments** - Available treatment types
+- **clinic_treatments** - Junction table linking clinics to treatments
+- **reviews** - User reviews with ratings
+- **users_profile** - User profiles (auto-created on signup)
