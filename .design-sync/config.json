@@ -1,0 +1,20 @@
+{
+  "pkg": "longevo",
+  "globalName": "Longevo",
+  "shape": "package",
+  "projectId": "40b62357-1142-47f6-bd06-971a0ccca9d7",
+  "srcDir": "src/components/ui",
+  "tsconfig": "./tsconfig.json",
+  "cssEntry": ".design-sync/compiled.css",
+  "buildCmd": "npx --yes tailwindcss@3.4.1 -c .design-sync/tailwind.compile.cjs -i src/app/globals.css -o .design-sync/compiled.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "Card": { "cardMode": "column" },
+    "Tabs": { "cardMode": "column" },
+    "Dialog": { "cardMode": "single", "viewport": "480x360" },
+    "AlertDialog": { "cardMode": "single", "viewport": "400x420" },
+    "Sheet": { "cardMode": "single", "viewport": "540x380" },
+    "DropdownMenu": { "cardMode": "single", "viewport": "300x320" },
+    "DropdownMenuLabel": { "cardMode": "single", "viewport": "300x320" }
+  }
+}
