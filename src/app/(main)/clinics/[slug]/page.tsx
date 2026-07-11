@@ -7,7 +7,6 @@ import {
   MapPin,
   Phone,
   Globe,
-  Mail,
   CheckCircle,
   Share2,
   Bookmark,
@@ -450,16 +449,6 @@ export default async function ClinicDetailPage({
                     </a>
                   </div>
                 )}
-                <div className="flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-gray-600 mt-0.5" />
-                  <a
-                    href="#"
-                    className="text-sm hover:underline"
-                    style={{ color: "hsl(var(--longevo-green))" }}
-                  >
-                    <Tr k="clinic_email" />
-                  </a>
-                </div>
               </div>
 
               {clinic.address && (
