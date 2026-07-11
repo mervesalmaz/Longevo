@@ -96,7 +96,7 @@ export default async function TreatmentDetailPage({
             <div className="flex items-center gap-3 mt-4 text-sm text-neutral-500">
               <span>
                 <span className="text-neutral-900 font-medium">
-                  {clinicCount || treatment.clinicCount}
+                  {clinicCount}
                 </span>{" "}
                 klinik bu tedaviyi sunuyor
               </span>
