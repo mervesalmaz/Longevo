@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { MapPin, Star, BadgeCheck, Users } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { ImageWithFallback } from "@/components/image-with-fallback";
 import { type Clinic } from "@/lib/types";
 
 interface ClinicCardProps {
@@ -14,85 +14,64 @@ export function ClinicCard({ clinic, treatments = [] }: ClinicCardProps) {
   const reviewCount = clinic.review_count ?? 0;
 
   return (
-    <Link href={`/clinics/${clinic.slug}`}>
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-200 h-full">
-        <div className="relative h-48 bg-muted">
-          {clinic.cover_image_url ? (
-            <img
-              src={clinic.cover_image_url}
-              alt={clinic.name}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-              <span className="text-4xl font-bold text-primary/30">
-                {clinic.name[0]}
-              </span>
-            </div>
-          )}
-          {clinic.verified && (
-            <div className="absolute top-3 right-3">
-              <Badge className="bg-primary text-white gap-1">
-                <BadgeCheck size={14} />
-                Verified
-              </Badge>
-            </div>
-          )}
+    <div className="rounded-lg border overflow-hidden hover:shadow-lg transition-shadow group bg-white">
+      <Link href={`/clinics/${clinic.slug}`}>
+        <div className="relative h-48 overflow-hidden bg-gray-100">
+          <ImageWithFallback
+            src={clinic.cover_image_url}
+            alt={clinic.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fallbackText={clinic.name[0]}
+          />
+          <button className="absolute top-2 right-2 w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors shadow-md">
+            <Bookmark className="w-4 h-4" />
+          </button>
         </div>
-        <CardContent className="p-4 space-y-3">
-          <div>
-            <h3 className="font-semibold text-lg leading-tight">
-              {clinic.name}
-            </h3>
-            <div className="flex items-center gap-1 text-muted-foreground text-sm mt-1">
-              <MapPin size={14} />
-              <span>
-                {clinic.city}, {clinic.country}
-              </span>
-            </div>
+      </Link>
+
+      <Link href={`/clinics/${clinic.slug}`}>
+        <div className="p-4">
+          {/* Rating dots */}
+          <div className="flex items-center gap-1 mb-2">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className="w-3 h-3 rounded-full"
+                style={{
+                  backgroundColor: i < Math.floor(avgRating) ? 'hsl(var(--longevo-green))' : '#E0E0E0'
+                }}
+              />
+            ))}
+            <span className="ml-2 font-semibold text-sm">
+              {reviewCount > 0 ? reviewCount.toLocaleString() : "New"}
+            </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              <Star size={16} className="fill-amber-400 text-amber-400" />
-              <span className="font-semibold text-sm">
-                {avgRating > 0 ? avgRating.toFixed(1) : "New"}
-              </span>
-            </div>
-            {reviewCount > 0 && (
-              <span className="text-muted-foreground text-sm">
-                ({reviewCount} {reviewCount === 1 ? "review" : "reviews"})
-              </span>
+          {/* Name */}
+          <h3 className="font-semibold text-lg group-hover:underline mb-1 line-clamp-1">
+            {clinic.name}
+          </h3>
+
+          {/* Description */}
+          {clinic.description && (
+            <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+              {clinic.description}
+            </p>
+          )}
+
+          {/* Location & treatments */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600">
+              {clinic.city}, {clinic.country}
+            </span>
+            {treatments.length > 0 && (
+              <Badge variant="secondary" className="text-xs">
+                {treatments[0]}
+              </Badge>
             )}
           </div>
-
-          {clinic.doctors && clinic.doctors.length > 0 && (
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Users size={14} />
-              <span>
-                {clinic.doctors[0].name}
-                {clinic.doctors.length > 1 &&
-                  ` +${clinic.doctors.length - 1} more`}
-              </span>
-            </div>
-          )}
-
-          {treatments.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {treatments.slice(0, 3).map((t) => (
-                <Badge key={t} variant="secondary" className="text-xs">
-                  {t}
-                </Badge>
-              ))}
-              {treatments.length > 3 && (
-                <Badge variant="secondary" className="text-xs">
-                  +{treatments.length - 3}
-                </Badge>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </Link>
+        </div>
+      </Link>
+    </div>
   );
 }

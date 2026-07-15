@@ -1,15 +1,31 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/navbar";
-import { Footer } from "@/components/footer";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleAnalytics } from "@/components/google-analytics";
+import { CookieConsent } from "@/components/cookie-consent";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Longevo — Discover & Review Longevity Clinics",
+  title: "Longevo — Discover Longevity Clinics & Treatments",
   description:
-    "Find and review the world's best longevity clinics. Compare treatments, read verified reviews, and start your journey to optimal health.",
+    "The world's first longevity clinic discovery platform. Find verified clinics, compare treatments, and join our private beta to start your biohacking journey.",
+  metadataBase: new URL("https://longevo.life"),
+  openGraph: {
+    title: "Longevo — Discover Longevity Clinics & Treatments",
+    description:
+      "Discover, compare, and book verified longevity clinics. Join our private beta.",
+    url: "https://longevo.life",
+    siteName: "Longevo",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Longevo — Discover Longevity Clinics & Treatments",
+    description:
+      "The world's first longevity clinic discovery platform. Join our private beta.",
+  },
 };
 
 export default function RootLayout({
@@ -18,11 +34,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="tr" className={inter.variable}>
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        {children}
+        <CookieConsent />
+        <SpeedInsights />
       </body>
     </html>
   );
