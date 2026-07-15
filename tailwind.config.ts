@@ -11,6 +11,8 @@ const config: Config = {
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
+        "input-background": "hsl(var(--input-background))",
+        "switch-background": "hsl(var(--switch-background))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -41,6 +43,9 @@ const config: Config = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        longevo: {
+          green: "hsl(var(--longevo-green))",
         },
       },
       borderRadius: {

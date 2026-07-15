@@ -10,6 +10,7 @@ import {
   Syringe,
   MessageSquare,
   Users,
+  Newspaper,
   LogOut,
   Menu,
   X,
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/admin/clinics", label: "Clinics", icon: Building2 },
   { href: "/admin/doctors", label: "Doctors", icon: Stethoscope },
   { href: "/admin/treatments", label: "Treatments", icon: Syringe },
+  { href: "/admin/articles", label: "Blog", icon: Newspaper },
   { href: "/admin/reviews", label: "Reviews", icon: MessageSquare },
   { href: "/admin/users", label: "Users", icon: Users },
 ];
