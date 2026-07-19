@@ -4,6 +4,7 @@ import { ArrowRight, Clock } from "lucide-react";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT } from "@/lib/i18n/server";
 import type { Article, ArticleCategory } from "@/lib/types";
 
 const TURKISH_MONTHS = [
@@ -55,6 +56,7 @@ const categoryStyle: Record<
 
 export default async function EditorialSection() {
   const supabase = createServerSupabaseClient();
+  const t = getT();
 
   // Fetch featured + published articles. If the table doesn't exist yet
   // (pre-migration), silently render nothing — section stays hidden.
@@ -86,8 +88,8 @@ export default async function EditorialSection() {
   return (
     <Section tone="base">
       <SectionHeader
-        title="Longevo Rehber"
-        subtitle="Doğru klinik seçiminden bilimsel temellere: longevity yolculuğunda bilmen gerekenler."
+        title={t("home_editorial_title")}
+        subtitle={t("home_editorial_subtitle")}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -155,7 +157,7 @@ export default async function EditorialSection() {
                       <>
                         <span className="inline-flex items-center gap-1">
                           <Clock className="w-3 h-3" />
-                          {article.reading_time} dk okuma
+                          {article.reading_time} {t("home_editorial_read_unit")}
                         </span>
                         {date && (
                           <span className="text-neutral-300">·</span>
@@ -180,7 +182,7 @@ export default async function EditorialSection() {
           className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline"
           style={{ color: "hsl(var(--longevo-green))" }}
         >
-          Tüm rehberleri oku
+          {t("home_editorial_cta")}
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

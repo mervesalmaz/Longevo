@@ -1,23 +1,24 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const valueProps = [
-  {
-    title: "Ücretsiz profil",
-    desc: "Klinik bilgileri, fotoğraflar, tedavi listesi, iletişim.",
-  },
-  {
-    title: "Doğrulanmış yorumlar",
-    desc: "Gerçek müşterilerden, filtreli ve şeffaf.",
-  },
-  {
-    title: "Türkiye'nin longevity SEO trafiği",
-    desc: '"İstanbul NAD+ terapi" araması yapan kullanıcıyla tanış.',
-  },
-];
+import { getT } from "@/lib/i18n/server";
 
 export default function ClinicOwnersCTA() {
+  const t = getT();
+  const valueProps = [
+    {
+      title: t("home_owners_prop_1_title"),
+      desc: t("home_owners_prop_1_desc"),
+    },
+    {
+      title: t("home_owners_prop_2_title"),
+      desc: t("home_owners_prop_2_desc"),
+    },
+    {
+      title: t("home_owners_prop_3_title"),
+      desc: t("home_owners_prop_3_desc"),
+    },
+  ];
   return (
     <section
       className="relative overflow-hidden py-16"
@@ -55,11 +56,10 @@ export default function ClinicOwnersCTA() {
 
       <div className="max-w-4xl mx-auto px-6 relative text-center">
         <h2 className="text-3xl md:text-4xl font-medium tracking-tight text-neutral-900 mb-3">
-          Klinik sahibi misin?
+          {t("home_owners_title")}
         </h2>
         <p className="text-lg text-neutral-700 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Longevo&apos;da kliniğini listele, Türkiye&apos;nin en hedefli
-          longevity kitlesine ulaş.
+          {t("home_owners_subtitle")}
         </p>
 
         {/* Value props */}
@@ -96,15 +96,14 @@ export default function ClinicOwnersCTA() {
         >
           {/* TODO: /klinik-kaydi route to be built. Temporary 404-graceful link. */}
           <Link href="/klinik-kaydi">
-            Kliniğini listele
+            {t("home_owners_cta")}
             <ArrowRight className="w-4 h-4" />
           </Link>
         </Button>
 
         {/* Founding-cohort fine print */}
         <p className="text-sm text-neutral-500 mt-4 max-w-xl mx-auto leading-relaxed">
-          İlk 20 klinik için 12 ay ücretsiz premium üyelik. Başvurular manuel
-          incelenir, ortalama onay süresi 48 saat.
+          {t("home_owners_fineprint")}
         </p>
       </div>
     </section>

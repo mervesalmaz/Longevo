@@ -9,29 +9,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { createClient } from "@/lib/supabase/client";
-
-const ERROR_MESSAGES: Record<string, string> = {
-  not_admin:
-    "Bu hesap admin paneline erişim yetkisine sahip değil. Doğru hesapla giriş yap.",
-  admin_unconfigured:
-    "Admin paneli yapılandırılmamış. Sistem yöneticisiyle iletişime geç.",
-  auth_failed: "Oturum açılamadı. Lütfen tekrar dene.",
-};
+import { useTranslation } from "@/lib/i18n/locale-provider";
 
 export default function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
+  const { t } = useTranslation();
+
+  const ERROR_MESSAGES: Record<string, string> = {
+    not_admin: t("login_error_not_admin"),
+    admin_unconfigured: t("login_error_admin_unconfigured"),
+    auth_failed: t("login_error_auth_failed"),
+  };
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Capture ?redirect=/admin and ?error=not_admin from middleware
-  const redirectTo = searchParams.get("redirect") ?? "/";
+  // Capture ?redirect=/admin and ?error=not_admin from middleware.
+  // Only allow internal paths — never redirect off-site (open-redirect guard).
+  const rawRedirect = searchParams.get("redirect") ?? "/";
+  const redirectTo =
+    rawRedirect.startsWith("/") && !rawRedirect.startsWith("//")
+      ? rawRedirect
+      : "/";
   const middlewareError = searchParams.get("error");
   const initialError = middlewareError
-    ? ERROR_MESSAGES[middlewareError] ?? "Bir hata oluştu."
+    ? ERROR_MESSAGES[middlewareError] ?? t("login_error_generic")
     : "";
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -66,19 +71,19 @@ export default function LoginForm() {
               <Leaf className="h-8 w-8 text-primary" />
               <span className="text-2xl font-bold">Longevo</span>
             </div>
-            <h1 className="text-xl font-semibold">Tekrar hoş geldin</h1>
+            <h1 className="text-xl font-semibold">{t("login_welcome_back")}</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Devam etmek için hesabınla giriş yap
+              {t("login_subtitle")}
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <Label htmlFor="email">E-posta</Label>
+              <Label htmlFor="email">{t("auth_email")}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="sen@ornek.com"
+                placeholder={t("auth_email_placeholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -86,7 +91,7 @@ export default function LoginForm() {
               />
             </div>
             <div>
-              <Label htmlFor="password">Şifre</Label>
+              <Label htmlFor="password">{t("auth_password")}</Label>
               <Input
                 id="password"
                 type="password"
@@ -109,14 +114,14 @@ export default function LoginForm() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
+              {loading ? t("login_submitting") : t("login_submit")}
             </Button>
           </form>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Hesabın yok mu?{" "}
+            {t("login_no_account")}{" "}
             <Link href="/auth/signup" className="text-primary hover:underline">
-              Kaydol
+              {t("login_signup_link")}
             </Link>
           </p>
         </CardContent>

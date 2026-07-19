@@ -8,6 +8,7 @@ import { PageShell } from "@/components/home/PageShell";
 import { Breadcrumb } from "@/components/page/Breadcrumb";
 import { cities } from "@/data/cities";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT, getLocale } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -16,11 +17,14 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
+  const t = getT();
   const c = cities.find((x) => x.slug === params.slug);
-  if (!c) return { title: "Şehir bulunamadı — Longevo" };
+  if (!c) return { title: t("city_notfound_title") };
+  // TR uses the locative form ("İzmir'de"); EN uses the plain city name.
+  const cityForm = getLocale() === "tr" ? c.locative : c.name;
   return {
-    title: `${c.name} longevity klinikleri — Longevo`,
-    description: `${c.name}'da bulunan doğrulanmış longevity ve biohacking klinikleri. Tedaviler, doktorlar, yorumlar bir arada.`,
+    title: t("city_meta_title").replace("{city}", c.name),
+    description: t("city_meta_description").replace("{city}", cityForm),
   };
 }
 
@@ -29,8 +33,12 @@ export default async function CityDetailPage({
 }: {
   params: { slug: string };
 }) {
+  const t = getT();
   const city = cities.find((c) => c.slug === params.slug);
   if (!city) notFound();
+
+  // TR uses the locative form ("İzmir'de"); EN uses the plain city name.
+  const cityForm = getLocale() === "tr" ? city.locative : city.name;
 
   const supabase = createServerSupabaseClient();
   const { data: clinics } = await supabase
@@ -57,8 +65,8 @@ export default async function CityDetailPage({
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <Breadcrumb
           items={[
-            { label: "Ana sayfa", href: "/" },
-            { label: "Şehirler", href: "/tr/sehirler" },
+            { label: t("common_home"), href: "/" },
+            { label: t("cities_breadcrumb"), href: "/tr/sehirler" },
             { label: city.name },
           ]}
         />
@@ -67,16 +75,14 @@ export default async function CityDetailPage({
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-14">
           <div className="md:col-span-3">
             <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-neutral-900 mb-4">
-              {city.name}&apos;da longevity
+              {t("city_hero_heading").replace("{city}", cityForm)}
             </h1>
             <p className="text-lg text-neutral-600 leading-relaxed mb-4">
-              {city.name}, Türkiye&apos;nin longevity ekosisteminde önemli
-              bir merkez. Şehirdeki doğrulanmış klinikleri, sunulan tedavileri
-              ve gerçek biohacker yorumlarını bir arada inceleyebilirsin.
+              {t("city_intro").replace("{city}", city.name)}
             </p>
             <div className="text-sm text-neutral-500">
               <span className="text-neutral-900 font-medium">{list.length}</span>{" "}
-              doğrulanmış klinik
+              {t("city_verified_clinics_suffix")}
             </div>
           </div>
           <div className="md:col-span-2 relative aspect-[4/3] md:aspect-auto rounded-2xl overflow-hidden bg-neutral-50">
@@ -93,7 +99,7 @@ export default async function CityDetailPage({
         {/* Clinics list */}
         <div className="mb-10 flex items-end justify-between">
           <h2 className="text-2xl font-medium text-neutral-900">
-            {city.name} klinikleri
+            {t("city_clinics_heading").replace("{city}", city.name)}
           </h2>
           <Button
             asChild
@@ -102,7 +108,7 @@ export default async function CityDetailPage({
           >
             <Link href={`/search?city=${city.slug}`}>
               <Search className="w-4 h-4 mr-1" />
-              Filtrele ve ara
+              {t("city_filter_search")}
             </Link>
           </Button>
         </div>
@@ -111,12 +117,11 @@ export default async function CityDetailPage({
           <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-10 text-center">
             <MapPin className="w-8 h-8 text-neutral-400 mx-auto mb-3" />
             <p className="text-neutral-600 mb-4">
-              {city.name}&apos;da henüz doğrulanmış klinik yok. Klinik
-              sahipleri başvurduğunda burada göreceksin.
+              {t("city_empty").replace("{city}", cityForm)}
             </p>
             <Button asChild variant="outline">
               <Link href="/klinik-kaydi">
-                Kliniğini kaydet
+                {t("city_register_clinic")}
                 <ArrowRight className="w-4 h-4 ml-1" />
               </Link>
             </Button>
@@ -160,7 +165,7 @@ export default async function CityDetailPage({
                       <span className="text-neutral-900 font-medium">
                         {clinic.avg.toFixed(1)}
                       </span>{" "}
-                      · {clinic.count} yorum
+                      · {clinic.count} {t("clinic_reviews_lower")}
                     </div>
                   )}
                 </div>

@@ -12,25 +12,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { treatments } from "@/data/treatments";
+import { treatments, treatmentLabel } from "@/data/treatments";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useTranslation } from "@/lib/i18n/locale-provider";
+import type { TranslationKey } from "@/lib/i18n/translations";
 
 type NavItem = {
-  label: string;
+  labelKey: TranslationKey;
   href: string;
   /** When true, renders a dropdown trigger instead of a plain link. */
   hasDropdown?: boolean;
 };
 
 const navItems: NavItem[] = [
-  { label: "Klinikler", href: "/search" },
-  { label: "Tedaviler", href: "/tr/tedaviler", hasDropdown: true },
-  { label: "Şehirler", href: "/tr/sehirler" },
-  { label: "Rehber", href: "/tr/rehber" },
-  { label: "Topluluk", href: "/reviews" },
+  { labelKey: "nav_clinics", href: "/search" },
+  { labelKey: "nav_treatments", href: "/tr/tedaviler", hasDropdown: true },
+  { labelKey: "nav_cities", href: "/tr/sehirler" },
+  { labelKey: "nav_guide", href: "/tr/rehber" },
+  { labelKey: "nav_community", href: "/reviews" },
 ];
 
 export default function Header() {
   const pathname = usePathname();
+  const { t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isActive = (href: string) => {
@@ -44,7 +48,7 @@ export default function Header() {
         {/* Logo */}
         <Link
           href="/"
-          aria-label="Longevo ana sayfa"
+          aria-label={t("a11y_logo_home")}
           className="flex items-center gap-2 flex-shrink-0"
         >
           <svg
@@ -72,13 +76,13 @@ export default function Header() {
               color: "hsl(var(--longevo-green))",
             }}
           >
-            Beta
+            {t("nav_beta_badge")}
           </span>
         </Link>
 
         {/* Center nav — desktop only */}
         <nav
-          aria-label="Ana navigasyon"
+          aria-label={t("a11y_main_nav")}
           className="hidden md:flex items-center gap-1"
         >
           {navItems.map((item) =>
@@ -100,12 +104,15 @@ export default function Header() {
 
         {/* Right CTAs */}
         <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="hidden md:inline-flex">
+            <LanguageSwitcher />
+          </div>
           <Button
             asChild
             variant="ghost"
             className="hidden md:inline-flex text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100"
           >
-            <Link href="/reviews/new">Yorum yaz</Link>
+            <Link href="/reviews/new">{t("home_hero_share_cta")}</Link>
           </Button>
           <Button
             asChild
@@ -114,7 +121,7 @@ export default function Header() {
             style={{ backgroundColor: "hsl(var(--longevo-green))" }}
           >
             {/* TODO: /login short route can be added as a next.config rewrite to /auth/login. */}
-            <Link href="/auth/login">Giriş</Link>
+            <Link href="/auth/login">{t("nav_login")}</Link>
           </Button>
 
           {/* Mobile: hamburger → Sheet drawer */}
@@ -123,7 +130,7 @@ export default function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                aria-label="Menüyü aç"
+                aria-label={t("a11y_open_menu")}
                 className="text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100"
               >
                 <Menu className="h-5 w-5" />
@@ -149,6 +156,7 @@ export default function Header() {
  * Desktop: plain nav link
  * ───────────────────────────────────────────────────────────── */
 function NavLink({ item, active }: { item: NavItem; active: boolean }) {
+  const { t } = useTranslation();
   return (
     <Link
       href={item.href}
@@ -159,7 +167,7 @@ function NavLink({ item, active }: { item: NavItem; active: boolean }) {
           : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/70"
       }`}
     >
-      {item.label}
+      {t(item.labelKey)}
     </Link>
   );
 }
@@ -175,6 +183,7 @@ function TreatmentsDropdown({
   item: NavItem;
   active: boolean;
 }) {
+  const { t, locale } = useTranslation();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -186,7 +195,7 @@ function TreatmentsDropdown({
               : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/70"
           }`}
         >
-          {item.label}
+          {t(item.labelKey)}
           <ChevronDown className="w-3.5 h-3.5 opacity-70" />
         </button>
       </DropdownMenuTrigger>
@@ -196,12 +205,13 @@ function TreatmentsDropdown({
         className="w-72 bg-white border border-neutral-200 p-2 shadow-lg"
       >
         <div className="grid grid-cols-2 gap-1">
-          {treatments.map((t) => {
-            const Icon = t.icon;
+          {treatments.map((tg) => {
+            const Icon = tg.icon;
+            const label = treatmentLabel(tg, locale);
             return (
-              <DropdownMenuItem key={t.slug} asChild className="cursor-pointer">
+              <DropdownMenuItem key={tg.slug} asChild className="cursor-pointer">
                 <Link
-                  href={`/tr/tedaviler/${t.slug}`}
+                  href={`/tr/tedaviler/${tg.slug}`}
                   className="flex items-start gap-2.5 p-2 rounded-md hover:bg-neutral-100 focus:bg-neutral-100"
                 >
                   <span
@@ -220,10 +230,10 @@ function TreatmentsDropdown({
                   </span>
                   <div className="min-w-0">
                     <div className="text-xs font-medium text-neutral-900 truncate">
-                      {t.title}
+                      {label.title}
                     </div>
                     <div className="text-[10px] text-neutral-500 truncate">
-                      {t.description}
+                      {label.description}
                     </div>
                   </div>
                 </Link>
@@ -238,7 +248,7 @@ function TreatmentsDropdown({
               className="flex items-center justify-between p-2 rounded-md hover:bg-neutral-100 focus:bg-neutral-100 text-sm font-medium"
               style={{ color: "hsl(var(--longevo-green))" }}
             >
-              Tüm tedaviler
+              {t("home_hero_chip_all")}
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </DropdownMenuItem>
@@ -259,6 +269,7 @@ function MobileMenu({
   pathname: string;
   onClose: () => void;
 }) {
+  const { t, locale } = useTranslation();
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(href + "/");
@@ -272,7 +283,7 @@ function MobileMenu({
           href="/"
           onClick={onClose}
           className="flex items-center gap-2"
-          aria-label="Longevo ana sayfa"
+          aria-label={t("a11y_logo_home")}
         >
           <span className="font-semibold text-lg text-neutral-900">Longevo</span>
           <span
@@ -282,14 +293,14 @@ function MobileMenu({
               color: "hsl(var(--longevo-green))",
             }}
           >
-            Beta
+            {t("nav_beta_badge")}
           </span>
         </Link>
         <Button
           variant="ghost"
           size="icon"
           onClick={onClose}
-          aria-label="Menüyü kapat"
+          aria-label={t("a11y_close_menu")}
           className="text-neutral-600 hover:text-neutral-900"
         >
           <X className="h-5 w-5" />
@@ -297,7 +308,7 @@ function MobileMenu({
       </div>
 
       {/* Nav */}
-      <nav aria-label="Ana navigasyon" className="flex-1 overflow-y-auto py-2">
+      <nav aria-label={t("a11y_main_nav")} className="flex-1 overflow-y-auto py-2">
         <ul className="space-y-0.5 px-2">
           {navItems.map((item) => (
             <li key={item.href}>
@@ -311,7 +322,7 @@ function MobileMenu({
                     : "text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100/70"
                 }`}
               >
-                {item.label}
+                {t(item.labelKey)}
               </Link>
             </li>
           ))}
@@ -320,17 +331,17 @@ function MobileMenu({
         {/* Tedaviler sub-links (always expanded on mobile) */}
         <div className="mt-4 px-2">
           <div className="text-xs font-medium text-neutral-500 uppercase tracking-wider px-3 mb-2">
-            Popüler tedaviler
+            {t("nav_popular_treatments")}
           </div>
           <ul className="space-y-0.5">
-            {treatments.slice(0, 6).map((t) => (
-              <li key={t.slug}>
+            {treatments.slice(0, 6).map((tg) => (
+              <li key={tg.slug}>
                 <Link
-                  href={`/tr/tedaviler/${t.slug}`}
+                  href={`/tr/tedaviler/${tg.slug}`}
                   onClick={onClose}
                   className="block px-3 py-2 rounded-md text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100/70 transition-colors"
                 >
-                  {t.title}
+                  {treatmentLabel(tg, locale).title}
                 </Link>
               </li>
             ))}
@@ -340,13 +351,16 @@ function MobileMenu({
 
       {/* CTAs */}
       <div className="border-t border-neutral-200 p-4 space-y-2">
+        <div className="flex justify-center pb-1">
+          <LanguageSwitcher variant="full" />
+        </div>
         <Button
           asChild
           variant="outline"
           className="w-full border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50"
           onClick={onClose}
         >
-          <Link href="/reviews/new">Yorum yaz</Link>
+          <Link href="/reviews/new">{t("home_hero_share_cta")}</Link>
         </Button>
         <Button
           asChild
@@ -354,7 +368,7 @@ function MobileMenu({
           style={{ backgroundColor: "hsl(var(--longevo-green))" }}
           onClick={onClose}
         >
-          <Link href="/auth/login">Giriş</Link>
+          <Link href="/auth/login">{t("nav_login")}</Link>
         </Button>
       </div>
     </div>

@@ -2,8 +2,10 @@ import Link from "next/link";
 import { ArrowRight, PenLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroSearchForm } from "./HeroSearchForm";
+import { getT } from "@/lib/i18n/server";
 
 export default function HeroSection() {
+  const t = getT();
   return (
     <section className="relative overflow-hidden bg-white py-16 md:py-24">
       {/* Soft green-washed gradient — subtle, light theme */}
@@ -22,15 +24,13 @@ export default function HeroSection() {
           {/* LEFT: 60% */}
           <div className="md:col-span-3">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-neutral-900 mb-4">
-              Türkiye&apos;nin longevity klinik rehberi
+              {t("home_hero_h1")}
             </h1>
             <h2 className="text-lg font-normal text-neutral-600 mb-3">
-              Doğrulanmış kullanıcı yorumlarıyla klinik, test ve tedavi keşfet.
+              {t("home_hero_h2")}
             </h2>
             <p className="text-sm text-neutral-500 mb-8 max-w-2xl leading-relaxed">
-              Türkiye&apos;deki biohacking kliniği seçeneklerini keşfet, anti-aging
-              klinik karşılaştırma yap: IV terapiden biyobelirteç testlerine, NAD+
-              kürlerinden genetik analizlere kadar doğrulanmış klinikler tek yerde.
+              {t("home_hero_intro")}
             </p>
 
             <HeroSearchForm />
@@ -54,10 +54,10 @@ export default function HeroSection() {
                 />
               </div>
               <h3 className="text-lg font-medium text-neutral-900 mb-1.5">
-                Deneyimini paylaş
+                {t("home_hero_share_title")}
               </h3>
               <p className="text-sm text-neutral-600 mb-5 leading-relaxed">
-                Aldığın bir tedaviyi değerlendir, topluluğa yardımcı ol.
+                {t("home_hero_share_desc")}
               </p>
               <Button
                 asChild
@@ -65,7 +65,7 @@ export default function HeroSection() {
                 style={{ backgroundColor: "hsl(var(--longevo-green))" }}
               >
                 <Link href="/reviews/new">
-                  Yorum yaz
+                  {t("home_hero_share_cta")}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </Button>
@@ -75,8 +75,7 @@ export default function HeroSection() {
 
         {/* Honest launch message */}
         <div className="mt-16 text-sm text-neutral-500 text-center italic">
-          Türkiye&apos;nin longevity ekosistemini haritalandırıyoruz. Her hafta
-          yeni klinikler ekleniyor.
+          {t("home_hero_launch_message")}
         </div>
 
         {/*

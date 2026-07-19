@@ -21,6 +21,8 @@
 export interface CityGuide {
   slug: string;
   name: string;
+  /** City name with the correct Turkish locative suffix (vowel harmony). */
+  locative: string;
   image: string;
   /** Fallback value; live count comes from Supabase at render time. */
   clinicCount: number;
@@ -30,6 +32,7 @@ export const cities: CityGuide[] = [
   {
     slug: "istanbul",
     name: "İstanbul",
+    locative: "İstanbul'da",
     image:
       "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&h=450&fit=crop",
     clinicCount: 25,
@@ -37,18 +40,21 @@ export const cities: CityGuide[] = [
   {
     slug: "ankara",
     name: "Ankara",
+    locative: "Ankara'da",
     image: "/images/cities/ankara.jpg",
     clinicCount: 8,
   },
   {
     slug: "izmir",
     name: "İzmir",
+    locative: "İzmir'de",
     image: "/images/cities/izmir.jpg",
     clinicCount: 5,
   },
   {
     slug: "antalya",
     name: "Antalya",
+    locative: "Antalya'da",
     image: "/images/cities/antalya.jpg",
     clinicCount: 3,
   },

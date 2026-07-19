@@ -5,12 +5,14 @@ import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 import { cities } from "@/data/cities";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT } from "@/lib/i18n/server";
 
 export default async function CityGuidesSection() {
   // Live clinic counts per city — matched on `clinics.city` against the
   // Turkish city name (same key the detail page uses via ilike). Turkish
   // locale lowercasing so "İstanbul" → "istanbul" on both sides.
   const supabase = createServerSupabaseClient();
+  const t = getT();
   const { data: clinicRows } = await supabase.from("clinics").select("city");
   const queryOk = clinicRows != null;
 
@@ -24,8 +26,8 @@ export default async function CityGuidesSection() {
   return (
     <Section tone="base">
       <SectionHeader
-        title="Şehrinizde longevity"
-        subtitle="Türkiye'nin dört şehrinde longevity ekosistemini keşfedin."
+        title={t("home_cities_title")}
+        subtitle={t("home_cities_subtitle")}
       />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -57,7 +59,8 @@ export default async function CityGuidesSection() {
                   {city.name}
                 </h3>
                 <div className="text-sm text-neutral-600">
-                  <span className="text-neutral-700">{count}</span> klinik
+                  <span className="text-neutral-700">{count}</span>{" "}
+                  {t("home_cities_providers")}
                 </div>
               </div>
             </Link>
@@ -82,10 +85,10 @@ export default async function CityGuidesSection() {
             />
           </div>
           <span className="text-sm font-medium text-neutral-900 mb-1">
-            Tüm şehirler
+            {t("search_all_cities")}
           </span>
           <span className="inline-flex items-center gap-1 text-xs text-neutral-600 group-hover:text-neutral-700">
-            Keşfet
+            {t("common_browse")}
             <ArrowRight className="w-3 h-3" />
           </span>
         </Link>

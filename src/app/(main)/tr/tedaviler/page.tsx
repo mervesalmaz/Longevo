@@ -2,18 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/home/PageShell";
 import { Breadcrumb } from "@/components/page/Breadcrumb";
-import { treatments } from "@/data/treatments";
+import { treatments, treatmentLabel } from "@/data/treatments";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT, getLocale } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Tedaviler — Longevo",
-  description:
-    "Türkiye'de sunulan longevity tedavilerinin kapsamlı rehberi. IV terapi, NAD+, biyobelirteç testi, genetik analiz ve daha fazlası.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = getT();
+  return {
+    title: t("treatments_meta_title"),
+    description: t("treatments_meta_description"),
+  };
+}
 
 export default async function TreatmentsListPage() {
+  const tx = getT();
+  const locale = getLocale();
   // Live clinic counts + starting prices per treatment (see
   // TreatmentGuidesSection for the same pattern). Real counts shown as-is.
   const supabase = createServerSupabaseClient();
@@ -42,35 +47,34 @@ export default async function TreatmentsListPage() {
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <Breadcrumb
           items={[
-            { label: "Ana sayfa", href: "/" },
-            { label: "Tedaviler" },
+            { label: tx("common_home"), href: "/" },
+            { label: tx("treatments_breadcrumb") },
           ]}
         />
 
         <div className="max-w-3xl mb-12">
           <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-neutral-900 mb-4">
-            Longevity tedavileri
+            {tx("treatments_title")}
           </h1>
           <p className="text-lg text-neutral-600 leading-relaxed">
-            Türkiye&apos;de sunulan tüm longevity tedavilerinin kapsamlı
-            rehberi. Her tedavi için nedir, kimler için uygun, fiyat aralığı
-            ve o tedaviyi sunan doğrulanmış klinikler.
+            {tx("treatments_intro")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {treatments.map((t) => {
-            const Icon = t.icon;
-            const count = liveCounts[t.slug] ?? 0;
-            const priceValue = livePrices[t.slug];
+          {treatments.map((tg) => {
+            const Icon = tg.icon;
+            const { title, description } = treatmentLabel(tg, locale);
+            const count = liveCounts[tg.slug] ?? 0;
+            const priceValue = livePrices[tg.slug];
             const price =
               priceValue != null
                 ? priceValue.toLocaleString("tr-TR")
-                : t.startPrice;
+                : tg.startPrice;
             return (
               <Link
-                key={t.slug}
-                href={`/tr/tedaviler/${t.slug}`}
+                key={tg.slug}
+                href={`/tr/tedaviler/${tg.slug}`}
                 className="group rounded-2xl border border-neutral-200 bg-white p-6 hover:border-neutral-300 hover:shadow-md transition-all flex flex-col shadow-sm"
               >
                 <div
@@ -88,10 +92,10 @@ export default async function TreatmentsListPage() {
                   />
                 </div>
                 <h2 className="text-lg font-medium text-neutral-900 mb-1.5">
-                  {t.title}
+                  {title}
                 </h2>
                 <p className="text-sm text-neutral-600 mb-4 leading-relaxed">
-                  {t.description}
+                  {description}
                 </p>
                 <div className="mt-auto text-xs text-neutral-500">
                   {count > 0 ? (
@@ -99,16 +103,18 @@ export default async function TreatmentsListPage() {
                       <span className="text-neutral-700 font-medium">
                         {count}
                       </span>{" "}
-                      klinik
+                      {tx("clinic_count_suffix")}
                       <span className="text-neutral-300 mx-1.5">·</span>
-                      Fiyat ~₺
+                      {tx("treatments_price_prefix")}
                       <span className="text-neutral-700 font-medium">
                         {price}
                       </span>
-                      &apos;den
+                      {tx("treatments_price_suffix")}
                     </>
                   ) : (
-                    <span className="text-neutral-400">Henüz klinik yok</span>
+                    <span className="text-neutral-400">
+                      {tx("treatments_no_clinics_yet")}
+                    </span>
                   )}
                 </div>
               </Link>

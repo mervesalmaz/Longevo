@@ -20,7 +20,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useTranslation } from "@/lib/i18n/locale-provider";
 import type { Clinic, Treatment } from "@/lib/types";
 
-const cities = ["Istanbul", "Ankara", "Berlin", "London"];
+const cities = ["İstanbul", "Ankara", "İzmir", "Antalya"];
 
 type SortOption = "rating" | "reviews" | "name";
 
@@ -183,7 +183,7 @@ export default function SearchContent() {
 
       {hasFilters && (
         <Button variant="outline" className="w-full" onClick={clearFilters}>
-          Clear All Filters
+          {t("search_clear_all")}
         </Button>
       )}
     </div>
@@ -236,7 +236,7 @@ export default function SearchContent() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search clinics..."
+                  placeholder={t("search_search_placeholder")}
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className="pl-9"
@@ -293,10 +293,10 @@ export default function SearchContent() {
                 <Filter className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold mb-2">{t("search_no_results")}</h3>
                 <p className="text-gray-600 mb-4">
-                  Try adjusting your filters to find what you&apos;re looking for
+                  {t("search_no_results_hint")}
                 </p>
                 <Button variant="outline" onClick={clearFilters}>
-                  Clear Filters
+                  {t("search_clear_filters")}
                 </Button>
               </div>
             ) : (

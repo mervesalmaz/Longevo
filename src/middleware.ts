@@ -1,12 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-/**
- * Routes that never require auth even on the admin domain.
- * Auth pages must stay accessible or nobody can log in.
- */
-const ADMIN_PUBLIC_PATHS = ["/auth/login", "/auth/signup", "/auth/callback"];
-
 export async function middleware(request: NextRequest) {
   const hostname = request.headers.get("host") ?? "";
   const pathname = request.nextUrl.pathname;
@@ -17,15 +11,12 @@ export async function middleware(request: NextRequest) {
   const isMainDomain = !isAdminDomain;
 
   // ── MAIN DOMAIN ────────────────────────────────────────────────
+  // Admin panel is only reachable on the admin domain.
   if (isMainDomain && pathname.startsWith("/admin")) {
     return NextResponse.redirect(new URL("/", request.url));
   }
-  if (
-    isMainDomain &&
-    (pathname === "/auth/login" || pathname === "/auth/signup")
-  ) {
-    return NextResponse.redirect(new URL("/beta", request.url));
-  }
+  // Auth pages (login/signup) stay public on the main domain so visitors
+  // can create an account and write reviews.
 
   // ── ADMIN DOMAIN ───────────────────────────────────────────────
   if (isAdminDomain) {

@@ -4,13 +4,15 @@ import { Button } from "@/components/ui/button";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 import { NewsletterForm } from "./NewsletterForm";
+import { getT } from "@/lib/i18n/server";
 
 export default function CommunitySection() {
+  const t = getT();
   return (
     <Section tone="base" id="newsletter">
       <SectionHeader
-        title="Topluluğun bir parçası ol"
-        subtitle="Deneyimini paylaş, sorular sor, Türkiye'deki biohacker'larla bağlan."
+        title={t("home_community_title")}
+        subtitle={t("home_community_subtitle")}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -29,14 +31,13 @@ export default function CommunitySection() {
           </div>
 
           <h3 className="text-xl font-medium text-neutral-900 mb-2">
-            Deneyimini paylaş
+            {t("home_hero_share_title")}
           </h3>
           <p className="text-base text-neutral-700 leading-relaxed mb-3">
-            Aldığın bir tedaviyi değerlendir, benzer yolculukta olanlara yardımcı
-            ol.
+            {t("home_hero_share_desc")}
           </p>
           <p className="text-sm text-neutral-500 leading-relaxed mb-6 flex-1">
-            Her yorum doğrulama sürecinden geçer. Yorumunu 5 dakikada tamamla.
+            {t("home_community_review_note")}
           </p>
 
           <Button
@@ -45,7 +46,7 @@ export default function CommunitySection() {
             style={{ backgroundColor: "hsl(var(--longevo-green))" }}
           >
             <Link href="/reviews/new">
-              Yorum yaz
+              {t("home_hero_share_cta")}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </Button>
@@ -66,25 +67,24 @@ export default function CommunitySection() {
           </div>
 
           <h3 className="text-xl font-medium text-neutral-900 mb-2">
-            Haftalık Longevo bülteni
+            {t("home_community_newsletter_title")}
           </h3>
           <p className="text-base text-neutral-700 leading-relaxed mb-6 flex-1">
-            Türkiye&apos;deki yeni klinikler, tartışılan tedaviler, bilimsel
-            gelişmeler. Haftada bir e-posta, spam yok.
+            {t("home_community_newsletter_desc")}
           </p>
 
           <NewsletterForm />
 
           {/* KVKK disclosure */}
           <p className="text-xs text-neutral-500 mt-3 leading-relaxed">
-            Abone olarak{" "}
+            {t("home_community_kvkk_before")}{" "}
             <Link
-              href="/tr/kvkk"
+              href="/yasal/kvkk"
               className="underline hover:text-neutral-700 transition-colors"
             >
-              KVKK kapsamında aydınlatma metnini
+              {t("home_community_kvkk_link")}
             </Link>{" "}
-            okudum ve onaylıyorum.
+            {t("home_community_kvkk_after")}
           </p>
         </div>
       </div>

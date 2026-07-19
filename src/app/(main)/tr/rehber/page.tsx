@@ -5,15 +5,18 @@ import { Clock, BookOpen } from "lucide-react";
 import { PageShell } from "@/components/home/PageShell";
 import { Breadcrumb } from "@/components/page/Breadcrumb";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT } from "@/lib/i18n/server";
 import type { Article, ArticleCategory } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Rehber — Longevo",
-  description:
-    "Longevity üzerine araştırma destekli yazılar. NAD+, biyobelirteç testi, anti-aging ve klinik seçimi rehberleri.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = getT();
+  return {
+    title: t("guide_meta_title"),
+    description: t("guide_meta_description"),
+  };
+}
 
 const TR_MONTHS = [
   "Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran",
@@ -34,6 +37,7 @@ const catStyle: Record<ArticleCategory, { bg: string; text: string }> = {
 };
 
 export default async function ArticlesListPage() {
+  const t = getT();
   const supabase = createServerSupabaseClient();
   const { data, error } = await supabase
     .from("articles")
@@ -51,27 +55,24 @@ export default async function ArticlesListPage() {
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <Breadcrumb
           items={[
-            { label: "Ana sayfa", href: "/" },
-            { label: "Rehber" },
+            { label: t("common_home"), href: "/" },
+            { label: t("guide_breadcrumb") },
           ]}
         />
 
         <div className="max-w-3xl mb-12">
           <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-neutral-900 mb-4">
-            Longevo Rehber
+            {t("guide_title")}
           </h1>
           <p className="text-lg text-neutral-600 leading-relaxed">
-            Longevity müdahaleleri üzerine araştırma destekli derin yazılar.
-            Klinik seçimi, bilimsel temel ve topluluk deneyimleri.
+            {t("guide_intro")}
           </p>
         </div>
 
         {articles.length === 0 ? (
           <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-10 text-center">
             <BookOpen className="w-8 h-8 text-neutral-400 mx-auto mb-3" />
-            <p className="text-neutral-600">
-              İlk makaleler yakında. Editör ekibimiz içerik hazırlıyor.
-            </p>
+            <p className="text-neutral-600">{t("guide_empty")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -119,7 +120,7 @@ export default async function ArticlesListPage() {
                         <>
                           <span className="inline-flex items-center gap-1">
                             <Clock className="w-3 h-3" />
-                            {a.reading_time} dk
+                            {a.reading_time} {t("reading_time_short")}
                           </span>
                           <span className="text-neutral-300">·</span>
                         </>

@@ -5,8 +5,9 @@ import { ArrowRight, Clock, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/home/PageShell";
 import { Breadcrumb } from "@/components/page/Breadcrumb";
-import { treatments } from "@/data/treatments";
+import { treatments, treatmentLabel } from "@/data/treatments";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT, getLocale } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +16,13 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const t = treatments.find((x) => x.slug === params.slug);
-  if (!t) return { title: "Tedavi bulunamadı — Longevo" };
+  const tt = getT();
+  const found = treatments.find((x) => x.slug === params.slug);
+  if (!found) return { title: tt("treatment_notfound_title") };
+  const { title, description } = treatmentLabel(found, getLocale());
   return {
-    title: `${t.title} — Longevo`,
-    description: `${t.title}: ${t.description}. Türkiye'de bu tedaviyi sunan doğrulanmış klinikleri karşılaştır.`,
+    title: `${title} — Longevo`,
+    description: `${title}: ${description}. ${tt("treatment_meta_desc_suffix")}`,
   };
 }
 
@@ -41,9 +44,12 @@ export default async function TreatmentDetailPage({
 }: {
   params: { slug: string };
 }) {
+  const tt = getT();
+  const locale = getLocale();
   const treatment = treatments.find((t) => t.slug === params.slug);
   if (!treatment) notFound();
 
+  const { title, description } = treatmentLabel(treatment, locale);
   const Icon = treatment.icon;
   const dbSlug = SLUG_MAP[params.slug];
 
@@ -68,9 +74,9 @@ export default async function TreatmentDetailPage({
       <div className="max-w-4xl mx-auto px-6 py-12 md:py-16">
         <Breadcrumb
           items={[
-            { label: "Ana sayfa", href: "/" },
-            { label: "Tedaviler", href: "/tr/tedaviler" },
-            { label: treatment.title },
+            { label: tt("common_home"), href: "/" },
+            { label: tt("treatments_breadcrumb"), href: "/tr/tedaviler" },
+            { label: title },
           ]}
         />
 
@@ -90,18 +96,22 @@ export default async function TreatmentDetailPage({
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-medium tracking-tight text-neutral-900 mb-2">
-              {treatment.title}
+              {title}
             </h1>
-            <p className="text-lg text-neutral-600">{treatment.description}</p>
+            <p className="text-lg text-neutral-600">{description}</p>
             <div className="flex items-center gap-3 mt-4 text-sm text-neutral-500">
               <span>
                 <span className="text-neutral-900 font-medium">
                   {clinicCount}
                 </span>{" "}
-                klinik bu tedaviyi sunuyor
+                {tt("treatment_clinics_offer")}
               </span>
               <span className="text-neutral-300">·</span>
-              <span>Fiyat ~₺{treatment.startPrice}&apos;den başlar</span>
+              <span>
+                {tt("treatments_price_prefix")}
+                {treatment.startPrice}
+                {tt("treatment_price_starts_suffix")}
+              </span>
             </div>
           </div>
         </div>
@@ -112,12 +122,13 @@ export default async function TreatmentDetailPage({
             <Clock className="w-5 h-5 text-neutral-500 flex-shrink-0 mt-0.5" />
             <div>
               <div className="font-medium text-neutral-900 mb-1">
-                Detaylı rehber yakında
+                {tt("treatment_guide_soon")}
               </div>
               <p className="text-sm text-neutral-600 leading-relaxed">
-                Longevo editörleri {treatment.title.toLowerCase()} rehberini
-                hazırlıyor. Bu arada Türkiye&apos;de bu tedaviyi sunan
-                doğrulanmış klinikleri inceleyebilirsin.
+                {tt("treatment_guide_prep").replace(
+                  "{treatment}",
+                  title.toLowerCase()
+                )}
               </p>
             </div>
           </div>
@@ -134,12 +145,18 @@ export default async function TreatmentDetailPage({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-medium text-neutral-900 mb-1">
-                {treatment.title} sunan klinikleri keşfet
+                {tt("treatment_cta_heading").replace(
+                  "{treatment}",
+                  title
+                )}
               </h2>
               <p className="text-sm text-neutral-600">
                 {clinicCount > 0
-                  ? `Türkiye'de bu tedaviyi sunan ${clinicCount} doğrulanmış klinik.`
-                  : "Bu tedaviyi sunan klinikleri listelemek için klinik eklememiz gerekiyor."}
+                  ? tt("treatment_cta_desc_count").replace(
+                      "{count}",
+                      String(clinicCount)
+                    )
+                  : tt("treatment_cta_desc_empty")}
               </p>
             </div>
             <Button
@@ -149,7 +166,7 @@ export default async function TreatmentDetailPage({
             >
               <Link href={`/search?treatment=${dbSlug ?? params.slug}`}>
                 <Search className="w-4 h-4" />
-                Klinikleri gör
+                {tt("treatment_view_clinics")}
               </Link>
             </Button>
           </div>
@@ -158,11 +175,12 @@ export default async function TreatmentDetailPage({
         {/* Related */}
         <div>
           <h2 className="text-xl font-medium text-neutral-900 mb-5">
-            İlgili tedaviler
+            {tt("treatment_related")}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {related.map((r) => {
               const RIcon = r.icon;
+              const rLabel = treatmentLabel(r, locale);
               return (
                 <Link
                   key={r.slug}
@@ -184,7 +202,7 @@ export default async function TreatmentDetailPage({
                     />
                   </span>
                   <span className="text-sm font-medium text-neutral-900">
-                    {r.title}
+                    {rLabel.title}
                   </span>
                   <ArrowRight className="w-3.5 h-3.5 text-neutral-400 ml-auto" />
                 </Link>

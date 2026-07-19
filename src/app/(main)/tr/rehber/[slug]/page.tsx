@@ -5,6 +5,7 @@ import { Clock, Calendar } from "lucide-react";
 import { PageShell } from "@/components/home/PageShell";
 import { Breadcrumb } from "@/components/page/Breadcrumb";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT } from "@/lib/i18n/server";
 import type { ArticleCategory } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,7 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
+  const t = getT();
   const supabase = createServerSupabaseClient();
   const { data } = await supabase
     .from("articles")
@@ -40,9 +42,9 @@ export async function generateMetadata({
     .eq("published", true)
     .single();
 
-  if (!data) return { title: "Rehber bulunamadı — Longevo" };
+  if (!data) return { title: t("guide_notfound_title") };
   return {
-    title: `${data.title} — Longevo Rehber`,
+    title: `${data.title} — ${t("guide_meta_title_suffix")}`,
     description: data.excerpt ?? undefined,
   };
 }
@@ -52,6 +54,7 @@ export default async function ArticleDetailPage({
 }: {
   params: { slug: string };
 }) {
+  const t = getT();
   const supabase = createServerSupabaseClient();
   const { data: article } = await supabase
     .from("articles")
@@ -70,8 +73,8 @@ export default async function ArticleDetailPage({
       <article className="max-w-3xl mx-auto px-6 py-12 md:py-16">
         <Breadcrumb
           items={[
-            { label: "Ana sayfa", href: "/" },
-            { label: "Rehber", href: "/tr/rehber" },
+            { label: t("common_home"), href: "/" },
+            { label: t("guide_breadcrumb"), href: "/tr/rehber" },
             { label: article.title },
           ]}
         />
@@ -98,7 +101,7 @@ export default async function ArticleDetailPage({
           {article.reading_time && (
             <span className="inline-flex items-center gap-1">
               <Clock className="w-3.5 h-3.5" />
-              {article.reading_time} dk okuma
+              {article.reading_time} {t("reading_time_read")}
             </span>
           )}
           {article.published_at && (
@@ -130,13 +133,10 @@ export default async function ArticleDetailPage({
         ) : (
           <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6">
             <div className="font-medium text-neutral-900 mb-1">
-              Makale yazım aşamasında
+              {t("article_wip_title")}
             </div>
             <p className="text-sm text-neutral-600 leading-relaxed">
-              Bu rehberin tam içeriği şu anda editör ekibimiz tarafından
-              hazırlanıyor. Üst kısımdaki özet konu hakkında genel bir fikir
-              veriyor. Yayınlandığında e-posta bülteninde haberdar olmak
-              istersen aboneliğe geçebilirsin.
+              {t("article_wip_body")}
             </p>
           </div>
         )}

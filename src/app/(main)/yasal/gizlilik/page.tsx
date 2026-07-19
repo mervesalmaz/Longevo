@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
 import { LegalPlaceholder } from "@/components/page/LegalPlaceholder";
+import { getT } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Gizlilik Politikası — Longevo",
-  description: "Longevo gizlilik politikası ve veri işleme uygulamaları.",
-};
+export function generateMetadata(): Metadata {
+  const t = getT();
+  return {
+    title: t("legal_gizlilik_meta_title"),
+    description: t("legal_gizlilik_meta_description"),
+  };
+}
 
 export default function GizlilikPage() {
+  const t = getT();
   return (
     <LegalPlaceholder
-      title="Gizlilik Politikası"
+      title={t("legal_gizlilik_title")}
       slug="gizlilik"
-      description="Longevo üzerinden topladığımız bilgiler, bu bilgileri nasıl kullandığımız, üçüncü taraflarla paylaşım politikamız ve veri güvenliği önlemlerimiz bu belgede yer alacak."
+      description={t("legal_gizlilik_description")}
     />
   );
 }

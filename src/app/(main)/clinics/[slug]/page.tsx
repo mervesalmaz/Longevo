@@ -8,17 +8,15 @@ import {
   Phone,
   Globe,
   CheckCircle,
-  Share2,
-  Bookmark,
   Circle,
   Award,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ReviewCard } from "@/components/review-card";
+import { ClinicActions } from "@/components/clinic-actions";
 import { ImageWithFallback } from "@/components/image-with-fallback";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { PageShell } from "@/components/home/PageShell";
@@ -166,16 +164,7 @@ export default async function ClinicDetailPage({
           alt={clinic.name}
           className="w-full h-full object-cover"
         />
-        <div className="absolute top-4 right-4 flex gap-2">
-          <Button variant="secondary" size="sm" className="gap-2 shadow-md">
-            <Share2 className="w-4 h-4" />
-            <Tr k="common_share" />
-          </Button>
-          <Button variant="secondary" size="sm" className="gap-2 shadow-md">
-            <Bookmark className="w-4 h-4" />
-            <Tr k="common_save" />
-          </Button>
-        </div>
+        <ClinicActions slug={clinic.slug} name={clinic.name} />
       </div>
 
       <div className="container mx-auto px-4 py-6">

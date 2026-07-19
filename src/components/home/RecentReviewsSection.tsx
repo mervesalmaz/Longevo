@@ -3,6 +3,7 @@ import { ArrowRight, Star, BadgeCheck } from "lucide-react";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT } from "@/lib/i18n/server";
 
 /**
  * Guard: section stays hidden until the community has produced enough
@@ -55,6 +56,7 @@ function truncate(text: string, max: number): string {
 
 export default async function RecentReviewsSection() {
   const supabase = createServerSupabaseClient();
+  const t = getT();
 
   // Gate 1: require ≥ 10 reviews in the system before rendering
   const { count } = await supabase
@@ -98,14 +100,14 @@ export default async function RecentReviewsSection() {
   return (
     <Section tone="base">
       <SectionHeader
-        title="Topluluktan son sesler"
-        subtitle="Gerçek deneyimler, doğrulanmış biohackerlardan."
+        title={t("home_reviews_title")}
+        subtitle={t("home_reviews_subtitle")}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {reviews.map((review) => {
           const profile = review.user_id ? profilesMap[review.user_id] : null;
-          const rawName = profile?.display_name ?? "Anonim";
+          const rawName = profile?.display_name ?? t("reviews_anonymous");
           const displayName = formatDisplayName(rawName);
           const initials = formatInitials(rawName);
           const clinic = Array.isArray(review.clinic)
@@ -142,7 +144,7 @@ export default async function RecentReviewsSection() {
                         style={{ color: "hsl(var(--longevo-green))" }}
                       >
                         <BadgeCheck className="w-2.5 h-2.5" />
-                        Doğrulanmış
+                        {t("common_verified")}
                       </span>
                     )}
                   </div>
@@ -159,7 +161,9 @@ export default async function RecentReviewsSection() {
                     {clinic.name}
                   </Link>
                 ) : (
-                  <span className="text-neutral-600">Klinik kaldırıldı</span>
+                  <span className="text-neutral-600">
+                    {t("home_reviews_clinic_removed")}
+                  </span>
                 )}
                 {review.treatment_received && (
                   <>
@@ -175,7 +179,7 @@ export default async function RecentReviewsSection() {
               <div
                 className="flex items-center gap-0.5 mb-4"
                 role="img"
-                aria-label={`5 üzerinden ${review.rating} yıldız`}
+                aria-label={t("reviews_stars_aria").replace("{rating}", String(review.rating))}
               >
                 {[...Array(5)].map((_, i) => {
                   const filled = i < review.rating;
@@ -206,14 +210,16 @@ export default async function RecentReviewsSection() {
                 >
                   {dateStr}
                 </time>
-                <Link
-                  href={`/reviews/${review.id}`}
-                  className="inline-flex items-center gap-1 text-xs hover:underline"
-                  style={{ color: "hsl(var(--longevo-green))" }}
-                >
-                  Tüm yorumu oku
-                  <ArrowRight className="w-3 h-3" />
-                </Link>
+                {clinic && (
+                  <Link
+                    href={`/clinics/${clinic.slug}`}
+                    className="inline-flex items-center gap-1 text-xs hover:underline"
+                    style={{ color: "hsl(var(--longevo-green))" }}
+                  >
+                    {t("home_reviews_view_clinic")}
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
+                )}
               </footer>
             </article>
           );
@@ -227,7 +233,7 @@ export default async function RecentReviewsSection() {
           className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline"
           style={{ color: "hsl(var(--longevo-green))" }}
         >
-          Tüm yorumları gör
+          {t("home_reviews_cta")}
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

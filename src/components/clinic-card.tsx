@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { Bookmark } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ImageWithFallback } from "@/components/image-with-fallback";
 import { type Clinic } from "@/lib/types";
+import { useTranslation } from "@/lib/i18n/locale-provider";
 
 interface ClinicCardProps {
   clinic: Clinic & { avg_rating?: number; review_count?: number };
@@ -10,6 +13,7 @@ interface ClinicCardProps {
 }
 
 export function ClinicCard({ clinic, treatments = [] }: ClinicCardProps) {
+  const { t } = useTranslation();
   const avgRating = clinic.avg_rating ?? 0;
   const reviewCount = clinic.review_count ?? 0;
 
@@ -43,7 +47,7 @@ export function ClinicCard({ clinic, treatments = [] }: ClinicCardProps) {
               />
             ))}
             <span className="ml-2 font-semibold text-sm">
-              {reviewCount > 0 ? reviewCount.toLocaleString() : "New"}
+              {reviewCount > 0 ? reviewCount.toLocaleString() : t("clinic_new")}
             </span>
           </div>
 

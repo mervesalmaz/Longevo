@@ -9,44 +9,45 @@ import EditorialSection from "@/components/home/EditorialSection";
 import CommunitySection from "@/components/home/CommunitySection";
 import ClinicOwnersCTA from "@/components/home/ClinicOwnersCTA";
 import Footer from "@/components/home/Footer";
+import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Longevo — Türkiye'nin longevity klinik rehberi",
-  description:
-    "Türkiye'deki biohacking kliniği ve anti-aging merkezlerini doğrulanmış kullanıcı yorumlarıyla karşılaştır. IV terapi, NAD+ tedavisi, biyobelirteç testi ve daha fazlası.",
-  openGraph: {
-    title: "Longevo — Türkiye'nin longevity klinik rehberi",
-    description:
-      "Doğrulanmış kullanıcı yorumlarıyla klinik, test ve tedavi keşfet.",
-    images: [
-      {
-        url: "https://longevo.life/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "Longevo — Türkiye'nin longevity klinik rehberi",
-      },
-    ],
-    locale: "tr_TR",
-    type: "website",
-    url: "https://longevo.life",
-    siteName: "Longevo",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Longevo — Türkiye'nin longevity klinik rehberi",
-    description:
-      "Doğrulanmış kullanıcı yorumlarıyla klinik, test ve tedavi keşfet.",
-    images: ["https://longevo.life/opengraph-image"],
-  },
-  alternates: {
-    canonical: "https://longevo.life/",
-    languages: {
-      "tr-TR": "https://longevo.life/",
+export function generateMetadata(): Metadata {
+  const t = getT();
+  return {
+    title: t("meta_site_title"),
+    description: t("home_meta_description"),
+    openGraph: {
+      title: t("meta_site_title"),
+      description: t("meta_site_og_description"),
+      images: [
+        {
+          url: "https://longevo.life/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: t("meta_site_title"),
+        },
+      ],
+      locale: "tr_TR",
+      type: "website",
+      url: "https://longevo.life",
+      siteName: "Longevo",
     },
-  },
-};
+    twitter: {
+      card: "summary_large_image",
+      title: t("meta_site_title"),
+      description: t("meta_site_og_description"),
+      images: ["https://longevo.life/opengraph-image"],
+    },
+    alternates: {
+      canonical: "https://longevo.life/",
+      languages: {
+        "tr-TR": "https://longevo.life/",
+      },
+    },
+  };
+}
 
 export default function HomePage() {
   return (

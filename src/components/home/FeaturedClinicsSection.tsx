@@ -4,6 +4,7 @@ import { ArrowRight, Star, MapPin, Sparkles } from "lucide-react";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT } from "@/lib/i18n/server";
 
 /**
  * Title & query strategy adapt to total review volume:
@@ -50,6 +51,7 @@ function computeStats(reviews: { rating: number }[] | null) {
 
 export default async function FeaturedClinicsSection() {
   const supabase = createServerSupabaseClient();
+  const t = getT();
 
   // 1. Total review volume — drives title + ranking strategy
   const { count: totalReviewsRaw } = await supabase
@@ -58,9 +60,10 @@ export default async function FeaturedClinicsSection() {
   const totalReviews = totalReviewsRaw ?? 0;
 
   let title: string;
-  if (totalReviews < EARLY_THRESHOLD) title = "Yeni eklenen klinikler";
-  else if (totalReviews <= MATURE_THRESHOLD) title = "Doğrulanmış klinikler";
-  else title = "Topluluğun seçimi";
+  if (totalReviews < EARLY_THRESHOLD) title = t("home_featured_title_early");
+  else if (totalReviews <= MATURE_THRESHOLD)
+    title = t("home_featured_title_mid");
+  else title = t("home_featured_title_mature");
 
   // 2. Fetch verified clinics (narrow select)
   // Try with editorial columns first; if they don't exist yet (pre-migration),
@@ -140,10 +143,7 @@ export default async function FeaturedClinicsSection() {
 
   return (
     <Section tone="alt">
-      <SectionHeader
-        title={title}
-        subtitle="Longevo ekosistemine son katılan, doğrulanmış klinikler."
-      />
+      <SectionHeader title={title} subtitle={t("home_featured_subtitle")} />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {featured.map((clinic) => {
@@ -169,7 +169,7 @@ export default async function FeaturedClinicsSection() {
                   {clinic.cover_image_url ? (
                     <Image
                       src={clinic.cover_image_url}
-                      alt={`${clinic.name} klinik kapak görseli`}
+                      alt={`${clinic.name} ${t("home_featured_cover_alt")}`}
                       fill
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover opacity-80 hover:opacity-100 hover:scale-105 transition-all duration-500"
@@ -238,7 +238,7 @@ export default async function FeaturedClinicsSection() {
           className="inline-flex items-center gap-1.5 text-sm font-medium hover:underline"
           style={{ color: "hsl(var(--longevo-green))" }}
         >
-          Tüm klinikleri gör
+          {t("home_featured_cta")}
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
@@ -252,6 +252,7 @@ export default async function FeaturedClinicsSection() {
  *   count > 0    →  "4.8 ⭐ (23 yorum)"
  */
 function RatingBadge({ avg, count }: { avg: number; count: number }) {
+  const t = getT();
   if (count === 0) {
     return (
       <span
@@ -262,7 +263,7 @@ function RatingBadge({ avg, count }: { avg: number; count: number }) {
         }}
       >
         <Sparkles className="w-2.5 h-2.5" />
-        Yeni
+        {t("clinic_new")}
       </span>
     );
   }
@@ -276,7 +277,7 @@ function RatingBadge({ avg, count }: { avg: number; count: number }) {
       />
       <span className="text-neutral-900 font-medium">{avg.toFixed(1)}</span>
       <span className="text-neutral-500">
-        ({count} yorum)
+        ({count} {t("clinic_reviews_lower")})
       </span>
     </span>
   );

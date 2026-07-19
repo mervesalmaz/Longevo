@@ -5,8 +5,10 @@ import Link from "next/link";
 import { Cookie, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { readConsent, writeConsent } from "@/lib/analytics";
+import { useTranslation } from "@/lib/i18n/locale-provider";
 
 export function CookieConsent() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export function CookieConsent() {
     >
       <button
         onClick={rejectAll}
-        aria-label="Banner'ı kapat (sadece zorunlu çerezler)"
+        aria-label={t("cookie_close_label")}
         className="absolute top-3 right-3 p-1 rounded hover:bg-neutral-100 text-neutral-500"
       >
         <X className="w-4 h-4" />
@@ -66,19 +68,18 @@ export function CookieConsent() {
             id="cookie-consent-title"
             className="text-base font-medium text-neutral-900 mb-1"
           >
-            Çerez tercihlerin
+            {t("cookie_title")}
           </h2>
           <p
             id="cookie-consent-desc"
             className="text-sm text-neutral-600 leading-relaxed"
           >
-            Longevo&apos;yu nasıl kullandığını anlamak için anonim analitik
-            çerezler kullanıyoruz. Reklam çerezi kullanmıyoruz.{" "}
+            {t("cookie_desc")}{" "}
             <Link
               href="/yasal/cerez"
               className="underline hover:text-neutral-900"
             >
-              Detaylar
+              {t("cookie_details")}
             </Link>
             .
           </p>
@@ -92,7 +93,7 @@ export function CookieConsent() {
           onClick={rejectAll}
           className="flex-1 sm:flex-initial border-neutral-300"
         >
-          Sadece zorunlu
+          {t("cookie_reject")}
         </Button>
         <Button
           size="sm"
@@ -100,7 +101,7 @@ export function CookieConsent() {
           className="flex-1 text-white"
           style={{ backgroundColor: "hsl(var(--longevo-green))" }}
         >
-          Kabul et
+          {t("cookie_accept")}
         </Button>
       </div>
     </div>

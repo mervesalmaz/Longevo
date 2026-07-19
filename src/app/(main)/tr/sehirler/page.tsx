@@ -5,16 +5,20 @@ import { PageShell } from "@/components/home/PageShell";
 import { Breadcrumb } from "@/components/page/Breadcrumb";
 import { cities } from "@/data/cities";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Şehirler — Longevo",
-  description:
-    "Türkiye'nin dört şehrinde longevity ekosistemi: İstanbul, Ankara, İzmir, Antalya.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = getT();
+  return {
+    title: t("cities_meta_title"),
+    description: t("cities_meta_description"),
+  };
+}
 
 export default async function CitiesListPage() {
+  const t = getT();
   const supabase = createServerSupabaseClient();
   const { data: clinicRows } = await supabase.from("clinics").select("city");
   const queryOk = clinicRows != null;
@@ -32,18 +36,17 @@ export default async function CitiesListPage() {
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
         <Breadcrumb
           items={[
-            { label: "Ana sayfa", href: "/" },
-            { label: "Şehirler" },
+            { label: t("common_home"), href: "/" },
+            { label: t("cities_breadcrumb") },
           ]}
         />
 
         <div className="max-w-3xl mb-12">
           <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-neutral-900 mb-4">
-            Longevity şehirleri
+            {t("cities_title")}
           </h1>
           <p className="text-lg text-neutral-600 leading-relaxed">
-            Türkiye&apos;nin dört büyük şehrinde longevity ekosistemi.
-            Şehre özel klinikler, fiyat farklılıkları ve bölgesel uzmanlıklar.
+            {t("cities_intro")}
           </p>
         </div>
 
@@ -75,7 +78,7 @@ export default async function CitiesListPage() {
                     <span className="text-neutral-900 font-medium">
                       {count}
                     </span>{" "}
-                    klinik
+                    {t("clinic_count_suffix")}
                   </div>
                 </div>
               </Link>

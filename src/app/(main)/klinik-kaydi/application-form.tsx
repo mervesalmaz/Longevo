@@ -10,11 +10,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase/client";
 import { treatments } from "@/data/treatments";
 import { track } from "@/lib/analytics";
+import { useTranslation } from "@/lib/i18n/locale-provider";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export function ApplicationForm() {
   const supabase = createClient();
+  const { t } = useTranslation();
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState("");
   const [selectedTreatments, setSelectedTreatments] = useState<string[]>([]);
@@ -80,15 +82,13 @@ export function ApplicationForm() {
           />
         </div>
         <h2 className="text-2xl font-medium text-neutral-900 mb-2">
-          Başvurun alındı
+          {t("klinik_form_success_title")}
         </h2>
         <p className="text-neutral-600 mb-6 max-w-md mx-auto">
-          Başvurun ortalama 48 saat içinde manuel olarak incelenir. Onaylanırsa
-          sana iletişime geçeceğiz — aksi halde sebep ile birlikte yanıt
-          alacaksın.
+          {t("klinik_form_success_desc")}
         </p>
         <Button asChild variant="outline">
-          <Link href="/">Ana sayfaya dön</Link>
+          <Link href="/">{t("klinik_form_back_home")}</Link>
         </Button>
       </div>
     );
@@ -101,7 +101,7 @@ export function ApplicationForm() {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="clinic_name">Klinik adı *</Label>
+          <Label htmlFor="clinic_name">{t("klinik_form_clinic_name")}</Label>
           <Input
             id="clinic_name"
             required
@@ -110,11 +110,11 @@ export function ApplicationForm() {
           />
         </div>
         <div>
-          <Label htmlFor="city">Şehir *</Label>
+          <Label htmlFor="city">{t("klinik_form_city")}</Label>
           <Input
             id="city"
             required
-            placeholder="İstanbul, Ankara, …"
+            placeholder={t("klinik_form_city_placeholder")}
             value={form.city}
             onChange={(e) => setForm({ ...form, city: e.target.value })}
           />
@@ -123,7 +123,7 @@ export function ApplicationForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="contact_name">İletişim kişisi *</Label>
+          <Label htmlFor="contact_name">{t("klinik_form_contact_name")}</Label>
           <Input
             id="contact_name"
             required
@@ -134,7 +134,7 @@ export function ApplicationForm() {
           />
         </div>
         <div>
-          <Label htmlFor="email">E-posta *</Label>
+          <Label htmlFor="email">{t("klinik_form_email")}</Label>
           <Input
             id="email"
             type="email"
@@ -148,7 +148,7 @@ export function ApplicationForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="phone">Telefon</Label>
+          <Label htmlFor="phone">{t("klinik_form_phone")}</Label>
           <Input
             id="phone"
             type="tel"
@@ -157,7 +157,7 @@ export function ApplicationForm() {
           />
         </div>
         <div>
-          <Label htmlFor="website">Web sitesi</Label>
+          <Label htmlFor="website">{t("klinik_form_website")}</Label>
           <Input
             id="website"
             type="url"
@@ -169,7 +169,7 @@ export function ApplicationForm() {
       </div>
 
       <div>
-        <Label className="mb-2 block">Sunduğunuz tedaviler</Label>
+        <Label className="mb-2 block">{t("klinik_form_treatments")}</Label>
         <div className="flex flex-wrap gap-2">
           {treatments.map((t) => {
             const selected = selectedTreatments.includes(t.slug);
@@ -192,11 +192,11 @@ export function ApplicationForm() {
       </div>
 
       <div>
-        <Label htmlFor="message">Eklemek istediğin detaylar</Label>
+        <Label htmlFor="message">{t("klinik_form_message")}</Label>
         <Textarea
           id="message"
           rows={4}
-          placeholder="Kliniğin, doktor kadron, öne çıkan tedaviler hakkında kısa bir tanıtım…"
+          placeholder={t("klinik_form_message_placeholder")}
           value={form.message}
           onChange={(e) => setForm({ ...form, message: e.target.value })}
         />
@@ -219,24 +219,24 @@ export function ApplicationForm() {
           {status === "loading" ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              Gönderiliyor…
+              {t("klinik_form_submitting")}
             </>
           ) : (
             <>
-              Başvuruyu gönder
+              {t("klinik_form_submit")}
               <ArrowRight className="w-4 h-4" />
             </>
           )}
         </Button>
         <p className="text-xs text-neutral-500 mt-3">
-          Göndererek{" "}
+          {t("klinik_form_kvkk_before")}
           <Link
             href="/yasal/kvkk"
             className="underline hover:text-neutral-700"
           >
-            KVKK aydınlatma metnini
-          </Link>{" "}
-          okuduğunu ve onayladığını kabul etmiş olursun.
+            {t("klinik_form_kvkk_link")}
+          </Link>
+          {t("klinik_form_kvkk_after")}
         </p>
       </div>
     </form>

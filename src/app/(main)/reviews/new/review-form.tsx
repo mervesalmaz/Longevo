@@ -42,7 +42,10 @@ export default function ReviewForm() {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        router.push(`/auth/login?redirect=/reviews/new?clinic=${clinicSlug}`);
+        const target = clinicSlug
+          ? `/reviews/new?clinic=${clinicSlug}`
+          : "/reviews/new";
+        router.push(`/auth/login?redirect=${encodeURIComponent(target)}`);
         return;
       }
       setUser(user);

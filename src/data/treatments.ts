@@ -21,11 +21,16 @@ import {
   Atom,
 } from "lucide-react";
 
+import type { Locale } from "@/lib/i18n/translations";
+
 export interface TreatmentGuide {
   slug: string;
   icon: LucideIcon;
   title: string;
   description: string;
+  /** English label (locale === "en"); Turkish stays in `title`/`description`. */
+  titleEn: string;
+  descriptionEn: string;
   /** TODO: replace with live count from Supabase */
   clinicCount: number;
   /** TODO: replace with live min price from Supabase (TRY) */
@@ -38,6 +43,8 @@ export const treatments: TreatmentGuide[] = [
     icon: Droplet,
     title: "IV Terapi",
     description: "Vitamin ve mineral infüzyonu",
+    titleEn: "IV Therapy",
+    descriptionEn: "Vitamin and mineral infusions",
     clinicCount: 12,
     startPrice: "800",
   },
@@ -46,6 +53,8 @@ export const treatments: TreatmentGuide[] = [
     icon: FlaskConical,
     title: "Biyobelirteç Testi",
     description: "Kapsamlı kan paneli ve analiz",
+    titleEn: "Biomarker Testing",
+    descriptionEn: "Comprehensive blood panel and analysis",
     clinicCount: 8,
     startPrice: "2.500",
   },
@@ -54,6 +63,8 @@ export const treatments: TreatmentGuide[] = [
     icon: Sparkles,
     title: "NAD+ Terapi",
     description: "Hücresel yenilenme küreleri",
+    titleEn: "NAD+ Therapy",
+    descriptionEn: "Cellular regeneration infusions",
     clinicCount: 6,
     startPrice: "1.500",
   },
@@ -62,6 +73,8 @@ export const treatments: TreatmentGuide[] = [
     icon: Cloud,
     title: "Ozon Terapi",
     description: "Oksidatif tedavi uygulamaları",
+    titleEn: "Ozone Therapy",
+    descriptionEn: "Oxidative therapy treatments",
     clinicCount: 10,
     startPrice: "500",
   },
@@ -70,6 +83,8 @@ export const treatments: TreatmentGuide[] = [
     icon: BarChart3,
     title: "Hormon Paneli",
     description: "Hormon optimizasyonu testleri",
+    titleEn: "Hormone Panel",
+    descriptionEn: "Hormone optimization testing",
     clinicCount: 7,
     startPrice: "1.800",
   },
@@ -78,6 +93,8 @@ export const treatments: TreatmentGuide[] = [
     icon: Dna,
     title: "Genetik Analiz",
     description: "DNA tabanlı sağlık raporu",
+    titleEn: "Genetic Analysis",
+    descriptionEn: "DNA-based health report",
     clinicCount: 4,
     startPrice: "4.000",
   },
@@ -86,6 +103,8 @@ export const treatments: TreatmentGuide[] = [
     icon: Circle,
     title: "PRP Terapi",
     description: "Platelet açısından zengin plazma",
+    titleEn: "PRP Therapy",
+    descriptionEn: "Platelet-rich plasma",
     clinicCount: 9,
     startPrice: "2.000",
   },
@@ -94,7 +113,19 @@ export const treatments: TreatmentGuide[] = [
     icon: Atom,
     title: "Kök Hücre",
     description: "Rejeneratif tıp uygulamaları",
+    titleEn: "Stem Cell",
+    descriptionEn: "Regenerative medicine treatments",
     clinicCount: 3,
     startPrice: "15.000",
   },
 ];
+
+/** Locale-aware label helper for treatment cards, dropdowns, detail pages. */
+export function treatmentLabel(
+  t: TreatmentGuide,
+  locale: Locale
+): { title: string; description: string } {
+  return locale === "en"
+    ? { title: t.titleEn, description: t.descriptionEn }
+    : { title: t.title, description: t.description };
+}

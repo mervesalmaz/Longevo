@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/locale-provider";
 
 export interface BreadcrumbItem {
   label: string;
@@ -7,8 +10,9 @@ export interface BreadcrumbItem {
 }
 
 export function Breadcrumb({ items }: { items: BreadcrumbItem[] }) {
+  const { t } = useTranslation();
   return (
-    <nav aria-label="Breadcrumb" className="mb-6">
+    <nav aria-label={t("breadcrumb_aria_label")} className="mb-6">
       <ol className="flex flex-wrap items-center gap-1.5 text-sm text-neutral-600">
         {items.map((item, idx) => {
           const isLast = idx === items.length - 1;

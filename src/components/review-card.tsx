@@ -1,6 +1,9 @@
+"use client";
+
 import { ThumbsUp, Circle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n/locale-provider";
 
 interface ReviewCardProps {
   review: {
@@ -16,10 +19,15 @@ interface ReviewCardProps {
   avatarUrl?: string;
 }
 
-export function ReviewCard({ review, userName = "Anonymous", avatarUrl }: ReviewCardProps) {
+export function ReviewCard({ review, userName, avatarUrl }: ReviewCardProps) {
+  const { t, locale } = useTranslation();
+  const displayName = userName || t("review_card_anonymous");
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    return date.toLocaleDateString(locale === "tr" ? "tr-TR" : "en-US", {
+      month: "long",
+      year: "numeric",
+    });
   };
 
   return (
@@ -28,14 +36,14 @@ export function ReviewCard({ review, userName = "Anonymous", avatarUrl }: Review
         <Avatar className="w-12 h-12">
           <AvatarImage src={avatarUrl} />
           <AvatarFallback className="bg-gray-200 text-gray-600">
-            {userName.charAt(0).toUpperCase()}
+            {displayName.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
 
         <div className="flex-1">
           <div className="mb-3">
             <div className="flex items-center gap-2 mb-1">
-              <p className="font-semibold">{userName}</p>
+              <p className="font-semibold">{displayName}</p>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-500">
               <div className="flex items-center gap-1">
@@ -67,7 +75,7 @@ export function ReviewCard({ review, userName = "Anonymous", avatarUrl }: Review
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" className="gap-2 -ml-2 text-gray-600">
               <ThumbsUp className="w-4 h-4" />
-              Helpful
+              {t("review_card_helpful")}
             </Button>
           </div>
         </div>

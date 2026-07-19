@@ -1,18 +1,22 @@
 import type { Metadata } from "next";
 import { LegalPlaceholder } from "@/components/page/LegalPlaceholder";
+import { getT } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "KVKK Aydınlatma Metni — Longevo",
-  description:
-    "Longevo olarak kişisel verilerinizi nasıl işlediğimize dair KVKK kapsamındaki aydınlatma metni.",
-};
+export function generateMetadata(): Metadata {
+  const t = getT();
+  return {
+    title: t("legal_kvkk_meta_title"),
+    description: t("legal_kvkk_meta_description"),
+  };
+}
 
 export default function KvkkPage() {
+  const t = getT();
   return (
     <LegalPlaceholder
-      title="KVKK Aydınlatma Metni"
+      title={t("legal_kvkk_title")}
       slug="kvkk"
-      description="6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında, Longevo olarak topladığımız kişisel veriler (e-posta, isim, yorum içerikleri, klinik başvuruları, Google Analytics aracılığıyla anonimleştirilmiş kullanım verisi), işleme amaçlarımız, saklama süreleri ve haklarınız bu belgede detaylandırılacaktır."
+      description={t("legal_kvkk_description")}
     />
   );
 }

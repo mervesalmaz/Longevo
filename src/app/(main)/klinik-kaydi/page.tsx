@@ -3,58 +3,60 @@ import Link from "next/link";
 import { CheckCircle2, TrendingUp, Users, BadgeCheck } from "lucide-react";
 import { PageShell } from "@/components/home/PageShell";
 import { Breadcrumb } from "@/components/page/Breadcrumb";
+import { getT } from "@/lib/i18n/server";
 import { ApplicationForm } from "./application-form";
 
-export const metadata: Metadata = {
-  title: "Kliniğini listele — Longevo",
-  description:
-    "Longevo'da kliniğini listele, Türkiye'nin en hedefli longevity kitlesine ulaş. İlk 20 klinik için 12 ay ücretsiz premium üyelik.",
-};
-
-const perks = [
-  {
-    icon: CheckCircle2,
-    title: "Ücretsiz profil",
-    desc: "Klinik bilgileri, fotoğraflar, tedavi listesi, iletişim.",
-  },
-  {
-    icon: BadgeCheck,
-    title: "Doğrulanmış yorumlar",
-    desc: "Gerçek müşterilerden, filtreli ve şeffaf.",
-  },
-  {
-    icon: Users,
-    title: "Hedefli kitle",
-    desc: "Longevity araması yapan high-intent kullanıcıya ulaş.",
-  },
-  {
-    icon: TrendingUp,
-    title: "SEO trafiği",
-    desc: "\"İstanbul NAD+ terapi\" gibi aramalarda görünürlük.",
-  },
-];
+export function generateMetadata(): Metadata {
+  const t = getT();
+  return {
+    title: t("klinik_meta_title"),
+    description: t("klinik_meta_desc"),
+  };
+}
 
 export default function ClinicSignupPage() {
+  const t = getT();
+
+  const perks = [
+    {
+      icon: CheckCircle2,
+      title: t("klinik_perk_1_title"),
+      desc: t("klinik_perk_1_desc"),
+    },
+    {
+      icon: BadgeCheck,
+      title: t("klinik_perk_2_title"),
+      desc: t("klinik_perk_2_desc"),
+    },
+    {
+      icon: Users,
+      title: t("klinik_perk_3_title"),
+      desc: t("klinik_perk_3_desc"),
+    },
+    {
+      icon: TrendingUp,
+      title: t("klinik_perk_4_title"),
+      desc: t("klinik_perk_4_desc"),
+    },
+  ];
+
   return (
     <PageShell>
       <div className="max-w-5xl mx-auto px-6 py-12 md:py-16">
         <Breadcrumb
           items={[
-            { label: "Ana sayfa", href: "/" },
-            { label: "Klinik kaydı" },
+            { label: t("common_home"), href: "/" },
+            { label: t("klinik_breadcrumb") },
           ]}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-14">
           <div className="lg:col-span-2">
             <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-neutral-900 mb-4">
-              Kliniğini Longevo&apos;da listele
+              {t("klinik_hero_title")}
             </h1>
             <p className="text-lg text-neutral-600 leading-relaxed">
-              Türkiye&apos;nin ilk longevity keşif platformunda yer al. IV
-              terapi, NAD+, biyobelirteç testi veya diğer longevity tedavileri
-              sunuyorsan — Longevo&apos;da profil açarak hedefli kitleye
-              ulaşabilirsin.
+              {t("klinik_hero_subtitle")}
             </p>
 
             <div
@@ -64,13 +66,13 @@ export default function ClinicSignupPage() {
                 color: "hsl(var(--longevo-green))",
               }}
             >
-              🎁 İlk 20 klinik için 12 ay ücretsiz premium üyelik
+              🎁 {t("klinik_hero_badge")}
             </div>
           </div>
 
           <div className="space-y-3">
             <h2 className="text-sm font-medium text-neutral-900 uppercase tracking-wider mb-3">
-              Sana ne sunuyoruz
+              {t("klinik_perks_heading")}
             </h2>
             {perks.map((p) => (
               <div key={p.title} className="flex items-start gap-3">
@@ -98,15 +100,14 @@ export default function ClinicSignupPage() {
         <ApplicationForm />
 
         <div className="mt-12 text-center text-sm text-neutral-500">
-          Sıkça sorulan sorular için{" "}
+          {t("klinik_faq_prompt_before")}
           <Link
             href="/klinik-kaydi/sss"
             className="underline hover:text-neutral-700 transition-colors"
           >
-            SSS sayfasına
-          </Link>{" "}
-          göz at. Süreç, doğrulama kriterleri ve ücretlendirme burada
-          açıklanıyor.
+            {t("klinik_faq_prompt_link")}
+          </Link>
+          {t("klinik_faq_prompt_after")}
         </div>
       </div>
     </PageShell>

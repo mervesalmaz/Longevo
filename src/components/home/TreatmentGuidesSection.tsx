@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { Section } from "./Section";
 import { SectionHeader } from "./SectionHeader";
-import { treatments } from "@/data/treatments";
+import { treatments, treatmentLabel } from "@/data/treatments";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getT, getLocale } from "@/lib/i18n/server";
 
 export default async function TreatmentGuidesSection() {
   // Live clinic counts per treatment via the clinic_treatments join table.
   // Two simple queries (links + id→slug map) avoid embedded-relationship
   // typing ambiguity. Real counts are shown as-is, including 0.
   const supabase = createServerSupabaseClient();
+  const t = getT();
+  const locale = getLocale();
   const [{ data: links }, { data: treatmentRows }] = await Promise.all([
     supabase.from("clinic_treatments").select("treatment_id"),
     supabase.from("treatments").select("id, slug, starting_price_try"),
@@ -32,26 +35,24 @@ export default async function TreatmentGuidesSection() {
   return (
     <Section tone="alt">
       <SectionHeader
-        title="Tedavi ve testleri keşfet"
-        subtitle="Her tedavi için: nedir, kimler için uygun, Türkiye'de fiyat aralığı, doğrulanmış klinikler."
+        title={t("home_treatments_title")}
+        subtitle={t("home_treatments_subtitle")}
       />
 
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {treatments.map((t) => {
-          const Icon = t.icon;
-          const count = liveCounts[t.slug] ?? 0;
-          const priceValue = livePrices[t.slug];
+        {treatments.map((tg) => {
+          const Icon = tg.icon;
+          const { title, description } = treatmentLabel(tg, locale);
+          const count = liveCounts[tg.slug] ?? 0;
+          const priceValue = livePrices[tg.slug];
           const price =
             priceValue != null
               ? priceValue.toLocaleString("tr-TR")
-              : t.startPrice;
+              : tg.startPrice;
           return (
             <Link
-              key={t.slug}
-              // TODO: /tr/tedaviler/[slug] editorial pages to be built.
-              // Until then this 404s gracefully — see roadmap note in
-              // src/data/treatments.ts for the live-data migration.
-              href={`/tr/tedaviler/${t.slug}`}
+              key={tg.slug}
+              href={`/tr/tedaviler/${tg.slug}`}
               className="group rounded-2xl border border-neutral-200 bg-white p-5 hover:border-neutral-300 hover:bg-neutral-50 transition-colors flex flex-col"
             >
               {/* Icon */}
@@ -72,26 +73,29 @@ export default async function TreatmentGuidesSection() {
 
               {/* Title */}
               <h3 className="text-base font-medium text-neutral-900 mb-1.5">
-                {t.title}
+                {title}
               </h3>
 
               {/* Description — single line */}
               <p className="text-sm text-neutral-600 mb-4 line-clamp-1">
-                {t.description}
+                {description}
               </p>
 
               {/* Meta — live clinic count + starting price */}
               <div className="mt-auto text-xs text-neutral-500">
                 {count > 0 ? (
                   <>
-                    <span className="text-neutral-600">{count}</span> klinik
+                    <span className="text-neutral-600">{count}</span>{" "}
+                    {t("search_clinics_lower")}
                     <span className="text-neutral-300 mx-1.5">·</span>
-                    Fiyat ~₺
+                    {t("home_treatments_price_from")} ~₺
                     <span className="text-neutral-600">{price}</span>
-                    &apos;den
+                    {t("home_treatments_price_suffix")}
                   </>
                 ) : (
-                  <span className="text-neutral-400">Henüz klinik yok</span>
+                  <span className="text-neutral-400">
+                    {t("home_treatments_empty")}
+                  </span>
                 )}
               </div>
             </Link>

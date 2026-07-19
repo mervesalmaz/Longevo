@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
 import { LegalPlaceholder } from "@/components/page/LegalPlaceholder";
+import { getT } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Çerez Politikası — Longevo",
-  description: "Longevo çerez kullanım politikası.",
-};
+export function generateMetadata(): Metadata {
+  const t = getT();
+  return {
+    title: t("legal_cerez_meta_title"),
+    description: t("legal_cerez_meta_description"),
+  };
+}
 
 export default function CerezPage() {
+  const t = getT();
   return (
     <LegalPlaceholder
-      title="Çerez Politikası"
+      title={t("legal_cerez_title")}
       slug="cerez"
-      description="Longevo'nun kullandığı çerez türleri (zorunlu, analitik, tercih), bunların amaçları, saklama süreleri ve çerez tercihlerinizi yönetme hakkınız bu belgede açıklanacak."
+      description={t("legal_cerez_description")}
     />
   );
 }

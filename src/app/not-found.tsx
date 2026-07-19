@@ -9,14 +9,14 @@ export default function NotFound() {
         <Leaf className="h-12 w-12 text-primary mx-auto mb-6" />
         <h1 className="text-4xl font-bold mb-2">404</h1>
         <p className="text-muted-foreground mb-6">
-          The page you&apos;re looking for doesn&apos;t exist.
+          Aradığın sayfa bulunamadı.
         </p>
         <div className="flex items-center justify-center gap-3">
           <Button asChild>
-            <Link href="/">Go Home</Link>
+            <Link href="/">Ana sayfa</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/search">Browse Clinics</Link>
+            <Link href="/search">Klinikleri keşfet</Link>
           </Button>
         </div>
       </div>

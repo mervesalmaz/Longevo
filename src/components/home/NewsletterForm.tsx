@@ -5,10 +5,12 @@ import { Mail, CheckCircle2, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { track } from "@/lib/analytics";
+import { useTranslation } from "@/lib/i18n/locale-provider";
 
 type Status = "idle" | "loading" | "success" | "error";
 
 export function NewsletterForm() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState("");
@@ -34,8 +36,8 @@ export function NewsletterForm() {
         setStatus("success");
         setMessage(
           data.already
-            ? "Zaten abonesin, teşekkürler."
-            : "Teşekkürler! E-postanı kontrol et."
+            ? t("newsletter_already")
+            : t("newsletter_success")
         );
         setEmail("");
         track("newsletter_subscribed", {
@@ -46,13 +48,13 @@ export function NewsletterForm() {
         setStatus("error");
         setMessage(
           data.error === "invalid_email"
-            ? "Geçerli bir e-posta adresi gir."
-            : "Bir şeyler ters gitti, tekrar dene."
+            ? t("newsletter_invalid_email")
+            : t("newsletter_error")
         );
       }
     } catch {
       setStatus("error");
-      setMessage("Bir şeyler ters gitti, tekrar dene.");
+      setMessage(t("newsletter_error"));
     }
   };
 
@@ -79,15 +81,15 @@ export function NewsletterForm() {
         <div className="relative flex-1">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500 pointer-events-none" />
           <label htmlFor="newsletter-email" className="sr-only">
-            e-posta adresi
+            {t("newsletter_email_label")}
           </label>
           <Input
             id="newsletter-email"
             type="email"
             required
             autoComplete="email"
-            aria-label="e-posta adresi"
-            placeholder="e-posta adresin"
+            aria-label={t("newsletter_email_label")}
+            placeholder={t("newsletter_email_placeholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="pl-9 h-11 border-neutral-200 bg-white text-neutral-900 placeholder:text-neutral-500"
@@ -103,10 +105,10 @@ export function NewsletterForm() {
           {status === "loading" ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin mr-1.5" />
-              Gönderiliyor
+              {t("newsletter_sending")}
             </>
           ) : (
-            "Abone ol"
+            t("home_footer_newsletter_cta")
           )}
         </Button>
       </div>

@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { getT } from "@/lib/i18n/server";
+import type { TranslationKey } from "@/lib/i18n/translations";
 
 /**
  * Rewritten from scratch to enforce: no (#) placeholder links, no empty
@@ -10,72 +13,73 @@ import Link from "next/link";
  */
 
 type FooterLink = {
-  label: string;
+  labelKey: TranslationKey;
   href: string;
   external?: boolean;
 };
 
 type FooterColumn = {
   id: string;
-  heading: string;
+  headingKey: TranslationKey;
   links: FooterLink[];
 };
 
 const columns: FooterColumn[] = [
   {
     id: "footer-about",
-    heading: "Longevo hakkında",
+    headingKey: "footer_about",
     links: [
-      { label: "Hakkımızda", href: "/hakkimizda" },
-      { label: "Basın", href: "mailto:press@longevo.life", external: true },
-      { label: "İletişim", href: "/iletisim" },
+      { labelKey: "footer_about_us", href: "/hakkimizda" },
+      { labelKey: "footer_press", href: "mailto:press@longevo.life", external: true },
+      { labelKey: "footer_contact", href: "/iletisim" },
     ],
   },
   {
     id: "footer-explore",
-    heading: "Keşfet",
+    headingKey: "footer_explore",
     links: [
-      { label: "Klinikler", href: "/search" },
-      { label: "Tedaviler", href: "/tr/tedaviler" },
-      { label: "Şehirler", href: "/tr/sehirler" },
-      { label: "Rehber", href: "/tr/rehber" },
+      { labelKey: "footer_clinics", href: "/search" },
+      { labelKey: "footer_treatments", href: "/tr/tedaviler" },
+      { labelKey: "nav_cities", href: "/tr/sehirler" },
+      { labelKey: "nav_guide", href: "/tr/rehber" },
     ],
   },
   {
     id: "footer-community",
-    heading: "Topluluk",
+    headingKey: "nav_community",
     links: [
-      { label: "Yorum yaz", href: "/reviews/new" },
-      { label: "Bülten", href: "/#newsletter" },
+      { labelKey: "home_hero_share_cta", href: "/reviews/new" },
+      { labelKey: "footer_newsletter", href: "/#newsletter" },
     ],
   },
   {
     id: "footer-clinics",
-    heading: "Klinik sahipleri",
+    headingKey: "footer_clinic_owners",
     links: [
-      { label: "Klinik kaydı", href: "/klinik-kaydi" },
-      { label: "SSS", href: "/klinik-kaydi/sss" },
+      { labelKey: "footer_clinic_register", href: "/klinik-kaydi" },
+      { labelKey: "footer_faq", href: "/klinik-kaydi/sss" },
     ],
   },
   {
     id: "footer-legal",
-    heading: "Yasal",
+    headingKey: "footer_legal",
     links: [
-      { label: "Kullanım koşulları", href: "/yasal/kullanim-kosullari" },
-      { label: "Gizlilik politikası", href: "/yasal/gizlilik" },
-      { label: "KVKK aydınlatma", href: "/yasal/kvkk" },
-      { label: "Çerez politikası", href: "/yasal/cerez" },
+      { labelKey: "footer_terms_of_use", href: "/yasal/kullanim-kosullari" },
+      { labelKey: "footer_privacy_policy", href: "/yasal/gizlilik" },
+      { labelKey: "footer_kvkk", href: "/yasal/kvkk" },
+      { labelKey: "footer_cookie_policy", href: "/yasal/cerez" },
     ],
   },
 ];
 
 export default function Footer() {
+  const t = getT();
   return (
     <footer className="bg-white border-t border-neutral-100">
       <div className="max-w-7xl mx-auto px-6">
         {/* Main nav — 5 columns */}
         <nav
-          aria-label="Site haritası"
+          aria-label={t("a11y_sitemap")}
           className="grid grid-cols-2 md:grid-cols-5 gap-8 py-16"
         >
           {columns.map((col) => (
@@ -84,7 +88,7 @@ export default function Footer() {
                 id={col.id}
                 className="text-sm font-medium text-neutral-900 mb-4"
               >
-                {col.heading}
+                {t(col.headingKey)}
               </h3>
               <ul
                 aria-labelledby={col.id}
@@ -97,14 +101,14 @@ export default function Footer() {
                         href={link.href}
                         className="hover:text-neutral-900 transition-colors"
                       >
-                        {link.label}
+                        {t(link.labelKey)}
                       </a>
                     ) : (
                       <Link
                         href={link.href}
                         className="hover:text-neutral-900 transition-colors"
                       >
-                        {link.label}
+                        {t(link.labelKey)}
                       </Link>
                     )}
                   </li>
@@ -119,7 +123,7 @@ export default function Footer() {
           <div className="flex items-center gap-3 text-sm text-neutral-500">
             <Link
               href="/"
-              aria-label="Longevo ana sayfa"
+              aria-label={t("a11y_logo_home")}
               className="flex items-center gap-2"
             >
               <svg
@@ -143,32 +147,11 @@ export default function Footer() {
                 <circle cx="16" cy="15" r="3" fill="black" />
               </svg>
             </Link>
-            <span>
-              © 2026 Longevo. Türkiye&apos;nin longevity rehberi.
-            </span>
+            <span>{t("footer_copyright_tagline")}</span>
           </div>
 
-          {/*
-            Language selector — Turkish-first.
-            English is shown muted as a signal it's on the roadmap.
-            When we localize the full public surface to EN, turn the
-            English span into a working button that sets the locale cookie.
-          */}
-          <div className="flex items-center gap-4 text-sm">
-            <span
-              aria-current="true"
-              className="inline-flex items-center gap-1.5 text-neutral-900"
-            >
-              <span aria-hidden>🇹🇷</span> Türkçe
-            </span>
-            <span
-              aria-disabled="true"
-              title="İngilizce yakında"
-              className="inline-flex items-center gap-1.5 text-neutral-400 cursor-not-allowed"
-            >
-              <span aria-hidden>🇬🇧</span> English
-            </span>
-          </div>
+          {/* Language selector — Turkish default, English available. */}
+          <LanguageSwitcher variant="full" />
         </div>
       </div>
     </footer>

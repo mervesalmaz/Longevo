@@ -3,58 +3,62 @@ import Link from "next/link";
 import { Mail, Building2, Newspaper, MessageCircle } from "lucide-react";
 import { PageShell } from "@/components/home/PageShell";
 import { Breadcrumb } from "@/components/page/Breadcrumb";
+import { getT } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "İletişim — Longevo",
-  description:
-    "Longevo ile iletişime geç. Genel sorular, klinik başvuruları, basın, iş ortaklıkları ve topluluk iletişim kanalları.",
-};
-
-const channels = [
-  {
-    icon: MessageCircle,
-    title: "Genel sorular",
-    desc: "Platform hakkında, beta erişimi, öneriler.",
-    email: "hello@longevo.life",
-  },
-  {
-    icon: Building2,
-    title: "Klinik başvuruları",
-    desc: "Kliniğini Longevo'da listelemek için.",
-    email: "klinik@longevo.life",
-    cta: { href: "/klinik-kaydi", label: "Veya başvuru formunu kullan →" },
-  },
-  {
-    icon: Newspaper,
-    title: "Basın",
-    desc: "Röportaj talepleri, içerik paylaşımı.",
-    email: "press@longevo.life",
-  },
-  {
-    icon: Mail,
-    title: "Yasal & KVKK",
-    desc: "Veri silme talepleri, yasal süreçler.",
-    email: "legal@longevo.life",
-  },
-];
+export function generateMetadata(): Metadata {
+  const t = getT();
+  return {
+    title: t("contact_meta_title"),
+    description: t("contact_meta_description"),
+  };
+}
 
 export default function ContactPage() {
+  const t = getT();
+
+  const channels = [
+    {
+      icon: MessageCircle,
+      title: t("contact_channel_general_title"),
+      desc: t("contact_channel_general_desc"),
+      email: "hello@longevo.life",
+    },
+    {
+      icon: Building2,
+      title: t("contact_channel_clinic_title"),
+      desc: t("contact_channel_clinic_desc"),
+      email: "klinik@longevo.life",
+      cta: { href: "/klinik-kaydi", label: t("contact_channel_clinic_cta") },
+    },
+    {
+      icon: Newspaper,
+      title: t("footer_press"),
+      desc: t("contact_channel_press_desc"),
+      email: "press@longevo.life",
+    },
+    {
+      icon: Mail,
+      title: t("contact_channel_legal_title"),
+      desc: t("contact_channel_legal_desc"),
+      email: "legal@longevo.life",
+    },
+  ];
+
   return (
     <PageShell>
       <div className="max-w-3xl mx-auto px-6 py-12 md:py-16">
         <Breadcrumb
           items={[
-            { label: "Ana sayfa", href: "/" },
-            { label: "İletişim" },
+            { label: t("common_home"), href: "/" },
+            { label: t("footer_contact") },
           ]}
         />
 
         <h1 className="text-4xl md:text-5xl font-medium tracking-tight text-neutral-900 mb-4">
-          İletişim
+          {t("footer_contact")}
         </h1>
         <p className="text-lg text-neutral-600 leading-relaxed mb-12">
-          Farklı konular için farklı kanallar. Yanıt süremiz ortalama 48
-          saattir — acil durumlarda daha hızlı dönüyoruz.
+          {t("contact_subtitle")}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -101,7 +105,7 @@ export default function ContactPage() {
         </div>
 
         <div className="mt-12 text-sm text-neutral-500 text-center">
-          İstanbul, Türkiye · Uzaktan çalışan ekip
+          {t("contact_location")}
         </div>
       </div>
     </PageShell>
